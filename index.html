@@ -1,0 +1,689 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Bússola Politica Sarda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: colonna unica da lettura (max 720px), striscia tessile in testa, schermate che si alternano: intro → domande → tappe → risultato */
+:root{
+  --bg:#f3f0e8; --surface:#fbf9f4; --ink:#1d1b17; --muted:#6a6355; --line:#d9d2c1;
+  --gold:#a97c1c; --gold-soft:#f0e3c2; --red:#9e2a1f; --track:#e7e1d2;
+  --fd:"Libre Baskerville", Georgia, "Times New Roman", serif;
+  --fb:"Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --fm:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14130f; --surface:#1d1b16; --ink:#efe9da; --muted:#a69d89; --line:#36322a;
+  --gold:#d9ae4e; --gold-soft:#3a2f17; --red:#d8604f; --track:#2b2821; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14130f; --surface:#1d1b16; --ink:#efe9da; --muted:#a69d89; --line:#36322a;
+  --gold:#d9ae4e; --gold-soft:#3a2f17; --red:#d8604f; --track:#2b2821; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+.band{height:14px;margin-inline:-16px;background:
+  repeating-linear-gradient(90deg,transparent 0 6px,var(--gold) 6px 8px,transparent 8px 14px),
+  repeating-linear-gradient(45deg,var(--red) 0 4px,transparent 4px 10px);
+  opacity:.85}
+.wrap{max-width:720px;margin:0 auto;padding-block:32px 0}
+.eyebrow{font-family:var(--fm);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+h1,h2,h3{font-family:var(--fd);font-weight:700;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,3.1rem);line-height:1.1}
+h2{font-size:clamp(1.4rem,4vw,1.9rem);line-height:1.2}
+h3{font-size:1.1rem}
+p{margin:0}
+.lede{font-size:1.08rem;max-width:62ch;color:var(--ink)}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-lg{display:flex;flex-direction:column;gap:32px}
+.note{border-left:3px solid var(--red);padding:12px 16px;background:var(--surface);font-size:.95rem}
+.note strong{color:var(--red)}
+.facts{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--fm);font-size:13px;color:var(--muted)}
+.facts b{color:var(--ink);font-weight:600}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:12px 22px;font-weight:600;border-radius:2px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:focus-visible,.opt:focus-visible,.link:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* domanda */
+.qhead{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.counter{font-family:var(--fm);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prog{height:4px;background:var(--track);position:relative}
+.prog i{position:absolute;inset:0 auto 0 0;background:var(--gold);transition:width .25s}
+.stages{display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px;color:var(--muted)}
+.stages span.on{color:var(--gold)}
+.qtext{font-family:var(--fd);font-size:clamp(1.25rem,3.6vw,1.6rem);line-height:1.35;min-height:4.2em;text-wrap:pretty}
+.opts{display:grid;gap:8px}
+.opt{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;padding:13px 16px;border:1px solid var(--line);background:var(--surface);border-radius:2px;transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--gold)}
+.opt.sel{border-color:var(--gold);background:var(--gold-soft)}
+.opt .k{font-family:var(--fm);font-size:12px;color:var(--muted)}
+.link{background:none;border:0;padding:4px 0;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+
+/* tappa */
+.stage-num{font-family:var(--fd);font-size:4rem;line-height:1;color:var(--gold)}
+
+/* risultati */
+.family{border:1px solid var(--line);background:var(--surface);padding:20px}
+.family .tag{display:inline-block;font-family:var(--fm);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;background:var(--gold);color:var(--bg)}
+.match-big{font-family:var(--fd);font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.15}
+.pct{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.axis{display:grid;gap:6px}
+.axis .lab{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.axis .lab span:first-child,.axis .lab span:last-child{min-width:0}
+.axis .name{font-family:var(--fm);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:center}
+.bar{height:22px;background:var(--track);position:relative;display:flex}
+.bar .l{background:var(--ink);height:100%}
+.bar .r{background:var(--gold);height:100%;flex:1}
+.bar .val{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 8px;font-family:var(--fm);font-size:12px;color:var(--bg);mix-blend-mode:normal}
+.bar .val b{font-weight:600}
+.bar .val b:last-child{color:var(--ink)}
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.item .nm{font-weight:600;min-width:0}
+.item .sub{grid-column:1/-1;font-size:14px;color:var(--muted)}
+.item .meter{grid-column:1/-1;height:6px;background:var(--track)}
+.item .meter i{display:block;height:100%;background:var(--gold)}
+.chip{font-family:var(--fm);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--line);color:var(--muted);margin-left:6px;white-space:nowrap}
+.chip.ind{border-color:var(--gold);color:var(--gold)}
+.chip.sar{border-color:var(--red);color:var(--red)}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fig{border-top:2px solid var(--gold);padding-top:10px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fig.far{border-top-color:var(--red)}
+.fig .pct{font-size:13px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+.small{font-size:13px}
+.small a{color:var(--muted)}
+details summary{cursor:pointer;font-weight:600}
+.intl{display:grid;grid-template-columns:1fr minmax(0,320px);gap:24px;align-items:center}
+@media (max-width:640px){.intl{grid-template-columns:1fr}}
+.cwrap{max-width:320px;width:100%;justify-self:center}
+.compass{width:100%;height:auto;display:block}
+.compass .q1{fill:var(--red);opacity:.16}.compass .q2{fill:var(--ink);opacity:.1}
+.compass .q3{fill:var(--gold);opacity:.18}.compass .q4{fill:var(--muted);opacity:.14}
+.compass .grid{stroke:var(--line);stroke-width:1}
+.compass .axisl{stroke:var(--muted);stroke-width:1.5}
+.compass .ql{fill:var(--muted);font-family:var(--fm);font-size:9px}
+.compass .al{fill:var(--ink);font-family:var(--fm);font-size:9px;letter-spacing:.1em}
+.compass .you{fill:var(--gold);stroke:var(--bg);stroke-width:2.5}
+.compass .ring{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 2}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-2px}
+.lg-you{background:var(--gold)}.lg-ring{border:1.5px dashed var(--ink)}
+#copybox{width:100%;min-height:120px;font-family:var(--fm);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="band" aria-hidden="true"></div>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ===================== ASSI =====================
+   valore -1 = polo sinistro, +1 = polo destro */
+const AX = [
+  {k:'sov', name:'Sovranità',  l:'Unione',     r:'Indipendenza'},
+  {k:'ide', name:'Identità',   l:'Civica',     r:'Identitaria'},
+  {k:'str', name:'Strategia',  l:'Istituzioni',r:'Rottura'},
+  {k:'eco', name:'Economia',   l:'Comunità',   r:'Mercato'},
+  {k:'soc', name:'Società',    l:'Tradizione', r:'Progresso'},
+  {k:'ter', name:'Territorio', l:'Sviluppo',   r:'Tutela'},
+  {k:'mon', name:'Mondo',      l:'Atlantica',  r:'Non allineata'},
+  {k:'aut', name:'Stato',      l:'Libertà',    r:'Autorità'}
+];
+const W = {sov:1.5, ide:1.1, str:1, eco:1, soc:1, ter:1, mon:1};
+const INTL_AX = ['eco','aut','soc'];
+
+/* ===================== DOMANDE =====================
+   [testo, asse, direzione (+1 = d'accordo spinge verso polo destro), peso] */
+const BLOCKS = [
+ {t:'La questione nazionale', q:[
+  ['La Sardegna è una nazione, non una regione con una bella identità.','sov',1],
+  ['Lo Statuto speciale del 1948, applicato davvero, basterebbe a risolvere i problemi dei sardi.','sov',-1],
+  ['In un referendum vincolante voterei per una Repubblica di Sardegna indipendente.','sov',1,1.5],
+  ["L'unità d'Italia è stata, tutto sommato, una buona cosa per i sardi.",'sov',-1],
+  ['Sentirsi sardi e sentirsi italiani non è in nessun modo una contraddizione.','sov',-1],
+  ['Se a Roma governasse il partito giusto, la Sardegna non avrebbe bisogno di più sovranità.','sov',-1],
+  ['Quando gioca la Nazionale italiana non riesco a tifarla, neanche ai Mondiali.','sov',1,.5],
+  ["Il problema della Sardegna non è lo Stato: sono i sardi che si lamentano e non fanno impresa.",'sov',-1]
+ ]},
+ {t:'Lingua e cultura', q:[
+  ['Il sardo deve essere lingua co-ufficiale con pari dignità in scuole, uffici e tribunali.','ide',1],
+  ['Serve uno standard scritto unico del sardo, anche se scontenta qualcuno.','ide',1,.5],
+  ['Chi vive in Sardegna da vent\'anni senza una goccia di sangue sardo è sardo quanto me.','ide',-1],
+  ['La storia sarda a scuola conta quanto il Risorgimento. Anzi, di più.','ide',1],
+  ['Un genitore sardo che parla solo italiano ai figli sta perdendo qualcosa di irrecuperabile.','ide',1],
+  ["La genetica particolare dei sardi è un buon argomento politico.",'ide',1],
+  ['Chi chiama "gnocchetti sardi" i malloreddus meriterebbe una multa.','ide',1,.5],
+  ['Un sardo emigrato a Torino da trent\'anni dovrebbe avere voce piena sul futuro dell\'isola.','ide',-1,.5]
+ ]},
+ {t:'Economia', q:[
+  ['Il mercato lasciato libero crea più ricchezza per tutti della mano pubblica.','eco',1],
+  ['Energia, acqua e trasporti devono essere in mano pubblica sarda.','eco',-1],
+  ['Cooperative e beni comuni, come gli usi civici, sono il modello economico più sardo che esista.','eco',-1],
+  ['Bisogna abbassare le tasse alle imprese anche a costo di tagliare la spesa pubblica.','eco',1],
+  ['Una zona franca fiscale integrale risolverebbe gran parte dei problemi economici dell\'isola.','eco',1],
+  ['Le rendite turistiche della Costa Smeralda andrebbero tassate molto di più.','eco',-1],
+  ['Un salario minimo fissato per legge è una buona idea.','eco',-1],
+  ['Se un fondo straniero compra mezza Gallura, sono affari suoi.','eco',1]
+ ]},
+ {t:'Fisco e risorse', q:[
+  ['La Sardegna dovrebbe riscuotere e gestire tutte le tasse pagate sull\'isola, come i Paesi Baschi.','sov',1],
+  ['Le accise sui carburanti raffinati in Sardegna spettano ai sardi.','sov',1],
+  ['Senza i trasferimenti dello Stato la Sardegna andrebbe in bancarotta in un anno.','sov',-1],
+  ['Una Sardegna indipendente dovrebbe battere moneta propria invece di usare l\'euro.','mon',1],
+  ['Sardex e le monete complementari sono il futuro dell\'economia isolana.','eco',-1,.5],
+  ['Scuola e sanità dovrebbero essere gestite per intero dalla Regione, senza vincoli romani.','sov',1],
+  ['La continuità territoriale è un diritto dei sardi, non una concessione da rinegoziare ogni anno.','eco',-1],
+  ['Lo spopolamento si combatte più con incentivi alle imprese che con servizi pubblici.','eco',1]
+ ]},
+ {t:'Territorio ed energia', q:[
+  ['La legge di iniziativa popolare Pratobello 24 andava approvata così com\'era.','ter',1],
+  ['Le pale eoliche offshore sono un prezzo accettabile per la transizione ecologica.','ter',-1],
+  ['Il Tyrrhenian Link serve più all\'Italia che alla Sardegna.','sov',1],
+  ['I vincoli del Piano Paesaggistico sulle coste frenano lo sviluppo e vanno allentati.','ter',-1],
+  ['Meglio un grande resort che dà lavoro di una costa vuota e intatta.','ter',-1],
+  ['Data center e industrie energivore sono un\'occasione da non perdere per il Sulcis.','ter',-1],
+  ['Un ettaro di sughereta vale più di un parco fotovoltaico.','ter',1],
+  ['Il turismo di massa è una forma di colonialismo.','ter',1]
+ ]},
+ {t:'Basi, guerra e mondo', q:[
+  ['Le basi militari vanno chiuse, bonificate e restituite alle comunità.','mon',1],
+  ['La fabbrica di bombe di Domusnovas va riconvertita, anche perdendo posti di lavoro.','mon',1],
+  ['Una Sardegna indipendente dovrebbe restare nella NATO.','mon',-1],
+  ['Una Sardegna indipendente dovrebbe restare nell\'Unione Europea.','mon',-1],
+  ['La Sardegna dovrebbe essere neutrale come la Svizzera, ma con più mare.','mon',1],
+  ['Sardi, corsi, catalani e baschi dovrebbero fare fronte comune come nazioni senza Stato.','sov',1],
+  ['Concentrare in Sardegna i detenuti al 41 bis è la prova che l\'isola è trattata come una colonia.','sov',1],
+  ['Gli Stati Uniti sono, nel complesso, un alleato e non un problema.','mon',-1]
+ ]},
+ {t:'Strategia', q:[
+  ['Chi vuole l\'indipendenza deve entrare nei governi regionali, anche alleandosi con partiti italiani.','str',-1],
+  ['L\'indipendenza va ottenuta solo con un referendum negoziato con lo Stato, modello Scozia.','str',-1],
+  ['Se lo Stato negasse per sempre il referendum, una dichiarazione unilaterale sarebbe legittima.','str',1],
+  ['La disobbedienza civile nonviolenta è uno strumento legittimo per la causa sarda.','str',1],
+  ['I comitati e i movimenti dal basso contano più dei partiti.','str',1],
+  ['Prima l\'indipendenza, poi decidiamo se essere di destra o di sinistra.','ide',1],
+  ['Più dei proclami servono competenze: prima si dimostra di saper amministrare un comune.','str',-1],
+  ['Il sardismo che governa con i partiti italiani ha fatto più danni che bene alla causa sarda.','str',1]
+ ]},
+ {t:'Simboli e riti', q:[
+  ['La bandiera nazionale dovrebbe essere l\'albero di Arborea, non i Quattro Mori.','sov',1,.5],
+  ['I Quattro Mori sono un simbolo della Corona d\'Aragona di cui liberarsi.','sov',1,.5],
+  ['Sa Die de sa Sardigna dovrebbe essere festa nazionale, scuole chiuse e fuochi d\'artificio.','ide',1],
+  ['Il 2 giugno e il 4 novembre non mi dicono niente.','sov',1],
+  ['Un nuraghe ricostruito in cemento per i turisti è un\'idea geniale.','ter',-1],
+  ['Il Cagliari è, di fatto, la nostra nazionale.','ide',1,.5],
+  ['I Giganti di Mont\'e Prama non dovrebbero mai lasciare l\'isola, nemmeno per una mostra.','ide',1,.5],
+  ['Le province andrebbero sostituite dalle regioni storiche: Barbagia, Ogliastra, Gallura e le altre.','ide',1]
+ ]},
+ {t:'Società', q:[
+  ['Il matrimonio tra persone dello stesso sesso dovrebbe essere pienamente legale.','soc',1],
+  ['L\'aborto deve restare un diritto garantito.','soc',1],
+  ['La famiglia tradizionale è la base della comunità sarda e va protetta dalle leggi.','soc',-1],
+  ['L\'immigrazione è una risorsa per i paesi che si stanno spopolando.','soc',1],
+  ['La religione dovrebbe avere un ruolo pubblico importante, nelle feste come nelle scuole.','soc',-1],
+  ['Le droghe leggere andrebbero legalizzate.','soc',1],
+  ['Il femminismo è parte integrante della lotta di liberazione sarda.','soc',1],
+  ['La festa del santo patrono conta più di qualsiasi festival culturale moderno.','soc',-1,.5]
+ ]},
+ {t:'Stato e libertà', q:[
+  ['In tempi di crisi il governo deve poter limitare temporaneamente le libertà personali.','aut',1],
+  ['La sorveglianza di massa è un prezzo accettabile per la sicurezza.','aut',1],
+  ['Lo Stato non dovrebbe mai vietare un libro, un film o un sito, per quanto offensivo.','aut',-1],
+  ['Ciò che degli adulti consenzienti fanno in privato non riguarda lo Stato.','aut',-1],
+  ['La certezza della pena viene prima della rieducazione.','aut',1],
+  ['L\'obbedienza all\'autorità è una virtù da insegnare ai bambini.','aut',1],
+  ['Il servizio militare o civile obbligatorio andrebbe reintrodotto.','aut',1],
+  ['Uno Stato giusto ha il minimo potere possibile sulla vita dei cittadini.','aut',-1],
+  ['Le manifestazioni che bloccano strade e servizi andrebbero vietate.','aut',1],
+  ['Le grandi scelte andrebbero prese con referendum e democrazia diretta, non dai politici di professione.','aut',-1]
+ ]},
+ {t:'Il mondo, in generale', q:[
+  ['Le grandi aziende private sono più efficienti di qualsiasi impresa di Stato.','eco',1],
+  ['I mezzi di produzione dovrebbero appartenere a chi ci lavora.','eco',-1],
+  ['Le disuguaglianze di ricchezza sono naturali e lo Stato non deve correggerle.','eco',1],
+  ['Il capitalismo, con tutti i suoi difetti, è il miglior sistema che abbiamo.','eco',1],
+  ['I sindacati dovrebbero avere più potere dentro le aziende.','eco',-1],
+  ['Il libero commercio internazionale fa bene a tutti i paesi che vi partecipano.','eco',1],
+  ['Le società migliorano quando si lasciano alle spalle le tradizioni.','soc',1],
+  ['Le identità di genere oltre maschile e femminile vanno riconosciute dalla legge.','soc',1]
+ ]},
+ {t:'Ultima curva', q:[
+  ['Un governo forte con poteri straordinari risolverebbe i problemi sardi più in fretta.','aut',1],
+  ['Sanità pubblica e privata dovrebbero competere: vince chi cura meglio.','eco',1],
+  ['Toglierei a Roma la gestione dei beni archeologici sardi, bronzetti compresi.','sov',1],
+  ['Una Sardegna indipendente dovrebbe avere un esercito proprio.','mon',-1],
+  ['Gli indipendentisti dovrebbero stare in un solo partito, anche se su tutto il resto la pensano diversamente.','ide',1,.5],
+  ['La transizione energetica va fatta, ma decisa e posseduta dalle comunità sarde.','sov',1,.5],
+  ['Chi difende il paesaggio con i presidi davanti ai porti ha ragione anche quando blocca i camion.','str',1],
+  ['Fra cent\'anni la Sardegna sarà uno Stato.','sov',1,.5]
+ ]}
+];
+const Q = []; BLOCKS.forEach((b,bi)=>b.q.forEach(q=>Q.push({text:q[0],ax:q[1],dir:q[2],w:q[3]||1,block:bi})));
+const STAGES = [24,48,72];
+const STAGE_TXT = [
+ ['Prima tappa','Hai chiuso questione nazionale, lingua ed economia. Adesso si parla di soldi, energia e basi.'],
+ ['Seconda tappa','A metà strada. Arrivano le domande su cui gli indipendentisti litigano di più tra loro, poi i simboli.'],
+ ['Terza tappa','Ultimo tratto: società, Stato e libertà, il mondo in generale. Da qui esce anche la tua ideologia internazionale.']
+];
+const OPTS = [
+ {v:2, t:'Totalmente d\'accordo'},
+ {v:1, t:'D\'accordo'},
+ {v:0, t:'Neutrale / non so'},
+ {v:-1,t:'In disaccordo'},
+ {v:-2,t:'Totalmente in disaccordo'}
+];
+
+/* ===================== IDEOLOGIE =====================
+   vettore: sov, ide, str, eco, soc, ter, mon */
+const IDEO = [
+ ['Indipendentismo socialista anticoloniale',[.9,.4,.7,-.9,.7,.8,.9],'Legge la Sardegna come colonia interna: liberazione nazionale e lotta di classe sono la stessa battaglia. Contro basi, speculazione e partiti italiani di ogni colore.'],
+ ['Indipendentismo socialdemocratico',[.8,.4,-.1,-.4,.5,.4,.2],'Repubblica di Sardegna con welfare forte, economia mista e politica nelle istituzioni. Il modello è la sinistra scozzese o basca di governo.'],
+ ['Indipendentismo liberale',[.8,.3,0,.6,.4,0,-.3],'Indipendenza come autogoverno responsabile: meno Stato, più impresa sarda, fisco proprio. L\'Italia è vista come un peso burocratico più che come un oppressore.'],
+ ['Indipendentismo libertario',[.8,0,.5,.9,.6,-.2,.3],'Sovranità sarda per avere meno Stato possibile, non uno Stato nuovo. Mercato libero, diritti civili ampi, diffidenza verso ogni centro di potere.'],
+ ['Indipendentismo cristiano-comunitario',[.8,.6,-.2,-.4,-.3,.5,.2],'La persona come essere relazionale, la comunità sarda come luogo concreto in cui si realizza. Giustizia sociale, sussidiarietà e radici cattoliche.'],
+ ['Indipendentismo di governo',[.7,.4,-.7,-.1,.3,.3,0],'L\'indipendenza si costruisce governando oggi: competenze, alleanze tattiche, conquiste concrete di sovranità, referendum quando ci sarà il consenso.'],
+ ['Indipendentismo nonviolento',[.8,.4,.4,-.3,.4,.6,.7],'Ispirazione gandhiana: disobbedienza civile, costruzione positiva, nessuna scorciatoia. Il conflitto con lo Stato è aperto ma rigorosamente nonviolento.'],
+ ['Nazionalitarismo trasversale',[1,.9,.6,0,0,.5,.4],'Prima la nazione sarda, poi destra e sinistra. Un blocco unico contro tutti i partiti italiani, che considera ascari anche i sardisti di governo.'],
+ ['Ecoindipendentismo dei comitati',[.7,.5,.8,-.5,.5,1,.6],'Nasce dai presidi contro la speculazione energetica e dalla Pratobello 24. Il territorio è il primo bene da difendere, la sovranità il mezzo.'],
+ ['Indipendentismo identitario conservatore',[.8,1,.3,.4,-.7,.2,0],'Lingua, fede, famiglia e tradizioni come cuore della nazione. Indipendenza per conservare ciò che la modernità e lo Stato italiano consumano.'],
+ ['Indipendentismo europeista',[.7,.2,-.4,0,.5,.3,-.5],'Una Repubblica di Sardegna dentro l\'Unione Europea, come Malta o l\'Irlanda. Più Europa dei popoli, meno Roma.'],
+ ['Sardismo storico lussiano',[.2,.7,.3,-.4,.3,.3,.2],'Il sardismo delle origini: federalismo, autonomia piena, giustizia sociale, antifascismo. Nazione sarda dentro uno Stato federale, non fuori da esso.'],
+ ['Sardismo di centrodestra',[-.1,.7,-.7,.4,-.5,-.2,-.2],'Forte identità sarda, autonomia, alleanze con il centrodestra italiano. I Quattro Mori sul palco, ma l\'indipendenza non è all\'ordine del giorno.'],
+ ['Sardismo di governo',[0,.6,-.8,.1,0,0,-.2],'Identità e autonomia come leva contrattuale con Roma. Si sta dove si governa, si tratta su fondi, entrate e competenze.'],
+ ['Autonomismo progressista',[-.1,.1,-.5,-.4,.6,.4,0],'Centrosinistra sardo che vuole uno Statuto più forte, diritti civili e tutela dell\'ambiente, dentro la Repubblica italiana.'],
+ ['Regionalismo civico',[0,.2,-.4,0,.3,.3,-.2],'Né destra né sinistra italiane: una coalizione sarda di buona amministrazione, autonomia ampia e partecipazione dei territori.'],
+ ['Autonomismo moderato',[-.2,.1,-.8,.3,-.1,-.2,-.5],'Lo Statuto speciale va bene, va solo applicato meglio. Stabilità, sviluppo, buoni rapporti con Roma e con Bruxelles.'],
+ ['Federalismo italiano',[-.2,.2,-.3,.3,0,0,-.3],'Un\'Italia federale con regioni forti e responsabili del proprio fisco. La Sardegna come uno dei soggetti di un patto nuovo.'],
+ ['Socialdemocrazia italiana',[-.7,-.4,-.7,-.4,.5,.1,-.4],'Welfare, lavoro e diritti dentro lo Stato italiano e l\'Unione Europea. La questione sarda è soprattutto una questione sociale.'],
+ ['Liberalismo europeista',[-.7,-.6,-.8,.6,.6,-.4,-.9],'Mercato, diritti individuali, integrazione europea e atlantica. Le identità regionali sono un patrimonio culturale, non un progetto politico.'],
+ ['Marxismo italiano',[-.4,-.3,.8,-1,.6,.4,.9],'La contraddizione principale è di classe. L\'isola soffre come periferia del capitale, e la risposta è l\'unità dei lavoratori oltre le nazioni.'],
+ ['Ecosocialismo',[-.3,-.2,.3,-.7,.8,1,.6],'Giustizia climatica e sociale insieme: transizione pubblica e democratica, decrescita dei consumi di suolo, pace.'],
+ ['Democrazia cristiana',[-.7,-.2,-.8,0,-.6,-.1,-.6],'Centro moderato di ispirazione cattolica: famiglia, solidarietà, unità nazionale, collocazione atlantica.'],
+ ['Populismo post-ideologico',[-.3,0,.3,-.2,0,.3,.3],'Il popolo contro le élite, la casta, i palazzi. Soluzioni pratiche, poca teoria, molta diffidenza verso i partiti tradizionali.'],
+ ['Conservatorismo nazionale italiano',[-1,-.6,-.4,.3,-.9,-.4,-.5],'Nazione italiana una e indivisibile, tradizione, sicurezza, controllo dei confini. Il sardismo è folklore da rispettare, non un progetto.'],
+ ['Liberismo di centrodestra',[-.7,-.4,-.7,.9,-.2,-.6,-.7],'Meno tasse, meno vincoli, più investimenti privati. Turismo e infrastrutture come motori, lo Stato come arbitro.'],
+ ['Tecnocrazia sviluppista',[-.4,-.5,-.9,.5,.3,-.9,-.6],'Decidono i dati e gli esperti: grandi opere, energia, connessioni. Il paesaggio è una variabile da ottimizzare.'],
+ ['Distributismo comunitario',[.2,.5,-.2,-.3,-.4,.6,.1],'Piccola proprietà diffusa, botteghe, terra a chi la lavora, comunità di paese. Diffida del grande capitale quanto del grande Stato.'],
+ ['Municipalismo libertario',[.5,0,1,-.8,.8,.8,1],'Le assemblee di paese come unità politica di base. Nessuno Stato, né italiano né sardo: federazioni di comunità libere.'],
+ ['Centralismo unitario',[-1,-.9,-.8,.2,0,-.5,-.6],'Le regioni speciali sono un residuo storico. Uno Stato, una lingua, regole uguali per tutti da Aosta a Lampedusa.'],
+ ['Pacifismo antimilitarista',[0,.1,.5,-.5,.6,.6,1],'Il tema che decide tutto è la pace: via le basi, via le fabbriche d\'armi, l\'isola come ponte nel Mediterraneo.'],
+ ['Centro esatto',[0,0,0,0,0,0,0],'Hai risposto in modo così equilibrato che la bussola gira su se stessa. O sei un saggio, o hai cliccato "neutrale" troppe volte.']
+];
+
+/* ===================== IDEOLOGIE INTERNAZIONALI =====================
+   vettore: eco (−1 uguaglianza, +1 mercato), aut (−1 libertà, +1 autorità), soc (−1 tradizione, +1 progresso) */
+const INTL = [
+ ['Anarco-comunismo',[-1,-1,.8],'Né Stato né mercato: comunità libere che mettono in comune produzione e consumo.'],
+ ['Anarco-sindacalismo',[-.9,-.9,.5],'Il sindacato come strumento di rivoluzione e come base della società futura, senza Stato.'],
+ ['Mutualismo',[-.4,-.9,.3],'Cooperative, mutuo soccorso e scambio equo tra produttori indipendenti, senza Stato né grandi capitali.'],
+ ['Anarchismo verde',[-.6,-.9,.4],'Comunità piccole e autogestite, in equilibrio con l\'ambiente, contro Stato e industrialismo.'],
+ ['Socialismo libertario',[-.8,-.7,.7],'Proprietà collettiva e autogestione, con forte diffidenza verso lo Stato centralizzato.'],
+ ['Marxismo-leninismo',[-1,.8,.3],'Partito d\'avanguardia, Stato socialista, pianificazione centrale dell\'economia.'],
+ ['Maoismo',[-1,1,.2],'Variante del marxismo-leninismo centrata sulle masse contadine e sulla rivoluzione permanente guidata dal partito.'],
+ ['Trotskismo',[-1,.4,.6],'Comunismo internazionalista e rivoluzione permanente, critico verso la burocrazia di Stato.'],
+ ['Eurocomunismo',[-.8,-.1,.5],'Comunismo democratico e parlamentare, autonomo da Mosca: la via di Berlinguer.'],
+ ['Socialismo democratico',[-.7,-.2,.6],'Superare il capitalismo con metodi democratici: grandi settori pubblici, democrazia economica.'],
+ ['Socialdemocrazia',[-.4,0,.5],'Capitalismo regolato con welfare universale, sindacati forti e tasse progressive.'],
+ ['Ecosocialismo',[-.7,-.3,.8],'Giustizia sociale e climatica insieme: l\'economia va ripianificata dentro i limiti del pianeta.'],
+ ['Progressismo radicale',[-.5,-.3,1],'Diritti civili, uguaglianza e cambiamento sociale come priorità assolute.'],
+ ['Populismo di sinistra',[-.6,.3,.1],'Il popolo contro le élite economiche, con uno Stato forte che redistribuisce.'],
+ ['Socialismo cristiano',[-.6,0,-.4],'Giustizia sociale e solidarietà radicate nel Vangelo e nella dottrina sociale della Chiesa.'],
+ ['Distributismo',[-.3,0,-.6],'Proprietà diffusa tra molte famiglie, botteghe e piccole aziende: né capitalismo dei grandi né socialismo di Stato.'],
+ ['Democrazia cristiana',[0,.2,-.5],'Centro di ispirazione cattolica: economia sociale, famiglia, sussidiarietà, moderazione.'],
+ ['Comunitarismo',[-.2,.3,-.3],'Il bene comune e i legami di comunità vengono prima dei diritti del singolo isolato.'],
+ ['Liberalismo sociale',[.1,-.2,.6],'Libertà individuali e mercato, ma con istruzione, sanità e pari opportunità garantite.'],
+ ['Economia sociale di mercato',[.3,.1,.2],'Mercato libero con regole forti, concorrenza e una rete di protezione sociale, alla tedesca.'],
+ ['Centrismo',[0,0,0],'Equilibrio tra le posizioni, scelte caso per caso, diffidenza verso gli estremi.'],
+ ['Georgismo',[.3,-.3,.4],'Mercato libero, ma la rendita della terra e delle risorse naturali appartiene a tutti e va tassata.'],
+ ['Liberalismo classico',[.7,-.5,.2],'Stato minimo, libero mercato, diritti individuali e Stato di diritto.'],
+ ['Neoliberismo',[.8,.1,.2],'Privatizzazioni, deregolamentazione e libero commercio globale, con uno Stato che garantisce il mercato.'],
+ ['Libertarismo',[.9,-.8,.3],'Massima libertà economica e personale: lo Stato si limita a difesa, giustizia e contratti.'],
+ ['Anarco-capitalismo',[1,-1,.2],'Nessuno Stato: proprietà privata e mercato regolano tutto, anche sicurezza e giustizia.'],
+ ['Paleolibertarismo',[.8,-.6,-.6],'Libero mercato e Stato minimo uniti a valori culturali tradizionali.'],
+ ['Conservatorismo liberale',[.5,.2,-.3],'Mercato e tradizione insieme: riforme graduali, ordine e responsabilità individuale.'],
+ ['Conservatorismo sociale',[.2,.4,-.8],'Famiglia, religione e morale tradizionale vanno difese anche attraverso le leggi.'],
+ ['Nazionalconservatorismo',[.2,.6,-.7],'La nazione, i confini e la tradizione al primo posto, con uno Stato deciso.'],
+ ['Populismo di destra',[.1,.6,-.5],'Il popolo contro le élite cosmopolite, sicurezza, controllo dell\'immigrazione.'],
+ ['Tecnocrazia',[.2,.6,.4],'Governare con competenza ed evidenze scientifiche, affidando le decisioni agli esperti.'],
+ ['Monarchismo tradizionalista',[.1,.7,-.9],'Ordine gerarchico, corona e altare: l\'autorità viene dalla tradizione e non dal voto.'],
+ ['Teocrazia',[0,.9,-1],'La legge religiosa come fondamento della legge civile.'],
+ ['Fascismo',[0,1,-.9],'Stato totalitario, nazionalismo estremo, corporativismo e soppressione del dissenso.']
+];
+
+/* ===================== PARTITI ===================== */
+const PARTIES = [
+ ['A Innantis','ind',[.8,.5,-.5,-.2,.2,.4,.2],'Indipendentismo nonviolento e propositivo guidato da Franciscu Sedda; nel 2024 dentro la coalizione di Alessandra Todde.'],
+ ['Liberu','ind',[.9,.4,.6,-.8,.8,.8,.8],'Sinistra indipendentista nata nel 2016 dall\'eredità di A Manca pro s\'Indipendentzia; nel 2024 con Soru, attiva sulla Pratobello 24.'],
+ ['Repùblica','ind',[.9,.5,.2,-.1,.5,.5,.4],'Progetto unitario del 2024 con attivisti di iRS, ProgReS e Torra; simbolo l\'albero sradicato di Arborea.'],
+ ['Sardigna Natzione Indipendentzia','ind',[1,.9,.8,-.3,0,.6,.6],'Fondata nel 1994 da Anghelu Caria; blocco nazionalitario trasversale, contrario ai partiti italiani di destra e di sinistra.'],
+ ['Sardegna chiama Sardegna','ind',[.5,.4,.3,-.5,.7,.7,.5],'Movimento civico e generazionale; nel 2024 nella lista Vota Sardigna con iRS e ProgReS, a sostegno di Soru.'],
+ ['Rossomori','sar',[.3,.6,.3,-.6,.5,.6,.5],'Sinistra di matrice sardista guidata da Lucia Chessa; nel 2024 in corsa da sola con Sardegna R-Esiste.'],
+ ['Partito Sardo d\'Azione','sar',[0,.8,-.7,.2,-.3,0,-.1],'Il partito storico del sardismo, fondato nel 1921; dal 2018 alleato della Lega e del centrodestra.'],
+ ['Progetto Sardegna','aut',[-.1,.3,-.2,-.1,.4,.6,-.2],'La formazione di Renato Soru; nel 2024 guida la Coalizione Sarda, alternativa ai due poli italiani.'],
+ ['Riformatori Sardi','aut',[-.4,.1,-.7,.5,.1,-.4,-.6],'Area liberaldemocratica e autonomista, stabilmente nel centrodestra.'],
+ ['Sardegna al Centro 20Venti','aut',[-.3,.2,-.8,.3,-.2,-.3,-.5],'Centristi di area centrodestra che rivendicano candidature decise in Sardegna e non a Roma.'],
+ ['Alleanza Sardegna','aut',[-.3,.3,-.6,.4,-.4,-.2,-.4],'Lista civica e autonomista del centrodestra.'],
+ ['Progressisti','ita',[-.4,0,-.7,-.3,.6,.2,-.3],'Area di centrosinistra legata a Massimo Zedda.'],
+ ['Movimento 5 Stelle','ita',[-.4,-.1,-.4,-.4,.3,.3,.3],'Il partito della presidente Alessandra Todde, alla guida della Regione dal 2024.'],
+ ['Partito Democratico','ita',[-.6,-.3,-.8,-.2,.6,0,-.6],'Primo partito del campo largo che governa la Regione dal 2024.'],
+ ['Alleanza Verdi Sinistra','ita',[-.5,-.2,-.3,-.7,.8,.8,.6],'Sinistra ecologista italiana, nella maggioranza Todde.'],
+ ['Rifondazione Comunista','ita',[-.3,-.1,.4,-.9,.7,.6,.9],'Sinistra comunista italiana; nel 2024 nella Coalizione Sarda di Soru.'],
+ ['Azione / +Europa','ita',[-.7,-.6,-.8,.6,.6,-.6,-.9],'Liberali ed europeisti; nel 2024 in lista unica nella coalizione di Soru.'],
+ ['Forza Italia','ita',[-.7,-.4,-.8,.7,-.3,-.5,-.8],'Centrodestra liberale e moderato.'],
+ ['Lega Sardegna','ita',[-.6,0,-.4,.4,-.7,-.3,-.2],'Sezione sarda della Lega, alleata del PSd\'Az dal 2018.'],
+ ['Fratelli d\'Italia','ita',[-.9,-.5,-.6,.3,-.8,-.4,-.6],'Primo partito del centrodestra; Paolo Truzzu candidato presidente nel 2024.']
+];
+const FAM = {ind:['Indipendentista','ind'],sar:['Sardista','sar'],aut:['Autonomista',''],ita:['Partito italiano','']};
+
+/* ===================== PERSONAGGI ===================== */
+const FIGS = [
+ ['Eleonora d\'Arborea','c. 1347–1404',[1,.8,.3,-.2,-.3,.3,0],'Giudicessa di Arborea, promulgò la Carta de Logu.'],
+ ['Mariano IV d\'Arborea','c. 1317–1375',[1,.8,.6,-.2,-.6,.2,-.2],'Giudice che portò l\'Arborea in guerra contro la Corona d\'Aragona.'],
+ ['Giovanni Maria Angioy','1751–1808',[.7,.4,.9,-.4,.6,.2,.3],'Alternos, guidò la rivolta antifeudale del 1795–96.'],
+ ['Giovanni Battista Tuveri','1815–1887',[.3,.4,.5,-.2,.5,.2,.2],'Pensatore democratico e federalista.'],
+ ['Emilio Lussu','1890–1975',[.2,.6,.6,-.6,.5,.2,.2],'Cofondatore del PSd\'Az, antifascista, socialista federalista.'],
+ ['Camillo Bellieni','1893–1975',[.3,.8,.2,-.1,0,.2,0],'Teorico della nazione sarda nel primo sardismo.'],
+ ['Antonio Gramsci','1891–1937',[-.2,-.1,.9,-1,.7,0,.6],'Nato ad Ales, marxista, teorico dell\'egemonia.'],
+ ['Antonio Simon Mossa','1916–1971',[1,.9,.5,-.3,.3,.8,.5],'Architetto, considerato il padre dell\'indipendentismo moderno.'],
+ ['Mario Melis','1921–2003',[.2,.7,-.3,-.3,.2,.3,.2],'Presidente sardista della Regione negli anni Ottanta.'],
+ ['Enrico Berlinguer','1922–1984',[-.6,-.3,-.2,-.8,.5,.2,0],'Sassarese, segretario del PCI.'],
+ ['Antonio Segni','1891–1972',[-.8,-.3,-.8,.1,-.6,-.4,-.8],'Democristiano, ministro della riforma agraria, presidente della Repubblica.'],
+ ['Francesco Cossiga','1928–2010',[-.3,.5,-.5,.3,-.5,-.3,-1],'Presidente della Repubblica, atlantista convinto e sardo orgoglioso.'],
+ ['Anghelu Caria','',[1,.9,.8,-.4,.2,.6,.6],'Fondatore di Sardigna Natzione nel 1994.'],
+ ['Gavino Sale','',[1,.6,.6,0,.4,.5,.4],'Fondatore di iRS.'],
+ ['Michela Murgia','1972–2023',[.7,.3,.4,-.5,1,.6,.6],'Scrittrice, candidata presidente nel 2014 con Sardegna Possibile.'],
+ ['Paolo Maninchedda','',[.7,.4,-.4,0,-.1,.2,-.1],'Cofondatore del Partito dei Sardi.'],
+ ['Franciscu Sedda','',[.8,.3,-.4,-.2,.2,.4,.2],'Semiologo, presidente di A Innantis.'],
+ ['Pier Franco Devias','',[.9,.4,.6,-.8,.7,.8,.8],'Primo segretario di Liberu.'],
+ ['Renato Soru','',[-.1,.3,-.2,0,.4,.6,-.2],'Presidente della Regione 2004–2008, leader della Coalizione Sarda nel 2024.'],
+ ['Alessandra Todde','',[-.2,0,-.6,-.3,.4,.1,0],'Presidente della Regione dal 2024.'],
+ ['Christian Solinas','',[-.1,.7,-.6,.3,-.5,-.2,-.2],'Presidente della Regione 2019–2024, PSd\'Az.']
+];
+
+
+/* ===================== MONDO: PARTITI E PERSONAGGI INTERNAZIONALI =====================
+   vettore: eco (−1 comunità, +1 mercato), aut (−1 libertà, +1 autorità), soc (−1 tradizione, +1 progresso), mon (−1 atlantica, +1 non allineata)
+   [nome, paese, nazione senza Stato?, vettore, descrizione] */
+const WAX = ['eco','aut','soc','mon'];
+const WPARTIES = [
+ ['Esquerra Republicana','Catalogna',1,[-.5,-.2,.8,.2],'Sinistra repubblicana e indipendentista catalana, protagonista del referendum del 2017.'],
+ ['Junts per Catalunya','Catalogna',1,[.3,0,.4,-.3],'Indipendentismo catalano di centrodestra, guidato da Carles Puigdemont.'],
+ ['CUP','Catalogna',1,[-.9,-.6,.9,.9],'Candidatura d\'Unitat Popular: indipendentismo anticapitalista, assembleare, anti-NATO.'],
+ ['EH Bildu','Paesi Baschi',1,[-.7,-.3,.8,.7],'Sinistra indipendentista basca, oggi primo o secondo partito nei Paesi Baschi.'],
+ ['PNV','Paesi Baschi',1,[.2,.1,.1,-.4],'Partito Nazionalista Basco: democristiano, moderato, da decenni al governo di Euskadi.'],
+ ['BNG','Galizia',1,[-.7,-.2,.8,.7],'Blocco Nazionalista Galego: nazionalismo di sinistra, in forte crescita.'],
+ ['Scottish National Party','Scozia',1,[-.3,-.1,.7,-.5],'Indipendentismo civico ed europeista; promosse il referendum del 2014.'],
+ ['Plaid Cymru','Galles',1,[-.5,-.2,.8,.2],'Nazionalismo gallese di sinistra, ecologista, a difesa della lingua.'],
+ ['Sinn Féin','Irlanda',1,[-.6,0,.6,.6],'Repubblicanesimo irlandese per la riunificazione dell\'isola; sinistra populista.'],
+ ['Femu a Corsica','Corsica',1,[-.2,-.1,.4,0],'Autonomisti corsi di Gilles Simeoni, alla guida della Collettività di Corsica.'],
+ ['Corsica Libera','Corsica',1,[-.3,.1,0,.4],'Indipendentismo corso, erede della tradizione più radicale.'],
+ ['N-VA','Fiandre',1,[.5,.3,-.3,-.5],'Nazionalismo fiammingo conservatore e liberista, per un Belgio confederale.'],
+ ['Bloc Québécois','Québec',1,[-.2,0,.6,-.3],'Sovranisti del Québec al parlamento federale canadese.'],
+ ['Movimento zapatista','Messico',0,[-.9,-.9,.6,1],'EZLN: autonomia indigena e comunità autogestite in Chiapas.'],
+ ['Die Linke','Germania',0,[-.9,-.1,.8,.7],'Sinistra socialista tedesca, critica della NATO.'],
+ ['SPD','Germania',0,[-.3,0,.5,-.5],'La socialdemocrazia tedesca, il più antico partito del Paese.'],
+ ['CDU/CSU','Germania',0,[.3,.2,-.3,-.7],'Democrazia cristiana tedesca, partito di Adenauer e Merkel.'],
+ ['Verdi tedeschi','Germania',0,[-.3,-.2,.9,-.7],'Ecologisti, oggi tra i più atlantisti d\'Europa.'],
+ ['Labour','Regno Unito',0,[-.4,0,.5,-.6],'Il laburismo britannico, di centrosinistra.'],
+ ['La France Insoumise','Francia',0,[-.8,.1,.8,.6],'Sinistra radicale di Jean-Luc Mélenchon.'],
+ ['Rassemblement National','Francia',0,[-.1,.6,-.6,.2],'Destra nazionale di Marine Le Pen e Jordan Bardella.'],
+ ['Podemos','Spagna',0,[-.7,-.2,.9,.5],'Sinistra nata dal movimento degli indignados del 2011.'],
+ ['Fidesz','Ungheria',0,[.1,.7,-.8,.3],'Nazionalconservatori di Viktor Orbán.'],
+ ['Partito Democratico','Stati Uniti',0,[-.2,0,.7,-.8],'Il centrosinistra americano.'],
+ ['Partito Repubblicano','Stati Uniti',0,[.6,.4,-.7,-.2],'La destra americana, oggi a trazione trumpiana.']
+];
+const WFIGS = [
+ ['Mahatma Gandhi','1869–1948',[-.4,-.5,0,1],'Guidò l\'India all\'indipendenza con la nonviolenza.'],
+ ['Nelson Mandela','1918–2013',[-.4,-.1,.6,.6],'Leader della lotta contro l\'apartheid, presidente del Sudafrica.'],
+ ['Martin Luther King','1929–1968',[-.5,-.4,.6,.5],'Pastore battista, guida nonviolenta dei diritti civili.'],
+ ['Dorothy Day','1897–1980',[-.7,-.7,-.2,1],'Cattolica, fondatrice del Catholic Worker, pacifista radicale.'],
+ ['Pasquale Paoli','1725–1807',[-.1,.2,.4,.4],'Padre della Corsica indipendente e della sua costituzione.'],
+ ['Michael Collins','1890–1922',[-.1,.3,-.3,.6],'Capo della guerra d\'indipendenza irlandese.'],
+ ['Éamon de Valera','1882–1975',[0,.3,-.7,.8],'Padre dell\'Irlanda indipendente e della sua neutralità.'],
+ ['Lluís Companys','1882–1940',[-.6,-.1,.5,.3],'Presidente della Generalitat, fucilato dal franchismo.'],
+ ['Sabino Arana','1865–1903',[0,.4,-.9,.3],'Fondatore del nazionalismo basco e del PNV.'],
+ ['Alex Salmond','1954–2022',[-.1,0,.3,-.2],'Primo ministro scozzese del referendum del 2014.'],
+ ['Carles Puigdemont','',[.3,0,.4,-.3],'Presidente catalano del referendum del 2017.'],
+ ['Simón Bolívar','1783–1830',[-.2,.5,.3,.6],'Libertador dell\'America Latina dal dominio spagnolo.'],
+ ['Thomas Sankara','1949–1987',[-.9,.6,.6,1],'Presidente rivoluzionario del Burkina Faso, anti-imperialista.'],
+ ['Che Guevara','1928–1967',[-1,.7,.4,1],'Rivoluzionario marxista, simbolo della guerriglia.'],
+ ['Rosa Luxemburg','1871–1919',[-1,-.5,.7,.8],'Marxista rivoluzionaria e antimilitarista.'],
+ ['Olof Palme','1927–1986',[-.6,0,.7,.6],'Premier socialdemocratico della Svezia neutrale.'],
+ ['Franklin D. Roosevelt','1882–1945',[-.4,.3,.3,-.6],'Presidente americano del New Deal.'],
+ ['Konrad Adenauer','1876–1967',[.3,.3,-.5,-.8],'Cancelliere democristiano, padre della Germania occidentale.'],
+ ['Charles de Gaulle','1890–1970',[.1,.7,-.5,.6],'Generale e presidente, portò la Francia fuori dal comando NATO.'],
+ ['Václav Havel','1936–2011',[.3,-.5,.4,-.6],'Dissidente e presidente della Cecoslovacchia libera.'],
+ ['Margaret Thatcher','1925–2013',[.9,.5,-.4,-.9],'Premier britannica del liberismo e della Guerra fredda.'],
+ ['Ronald Reagan','1911–2004',[.8,.3,-.6,-1],'Presidente americano del libero mercato e dell\'anticomunismo.']
+];
+
+/* ===================== CALCOLO ===================== */
+function scores(ans){
+  const s={},d={}; AX.forEach(a=>{s[a.k]=0;d[a.k]=0});
+  Q.forEach((q,i)=>{ const v=ans[i]==null?0:ans[i]; s[q.ax]+=v*q.dir*q.w; d[q.ax]+=2*q.w; });
+  const out={}; AX.forEach(a=>out[a.k]= d[a.k]? s[a.k]/d[a.k] : 0); return out;
+}
+const ORDER = ['sov','ide','str','eco','soc','ter','mon'];
+function dist(sc,vec){ let t=0; ORDER.forEach((k,i)=>{const x=sc[k]-vec[i]; t+=W[k]*x*x}); return Math.sqrt(t); }
+const DMAX = 2*Math.sqrt(ORDER.reduce((a,k)=>a+W[k],0));
+function pct(d){ return Math.max(0,Math.round(100*(1-d/(DMAX*.55)))); }
+function rankIntl(sc){ return INTL.map(x=>({x,d:Math.sqrt(INTL_AX.reduce((t,k,i)=>t+(sc[k]-x[1][i])**2,0))})).sort((a,b)=>a.d-b.d); }
+function rankW(list,sc,vi){ return list.map(x=>({x,d:Math.sqrt(WAX.reduce((t,k,i)=>t+(sc[k]-x[vi][i])**2,0))})).sort((a,b)=>a.d-b.d); }
+function wpct(d){ return Math.max(0,Math.round(100*(1-d/2))); }
+function ipct(d){ return Math.max(0,Math.round(100*(1-d/(2*Math.sqrt(3)*.5)))); }
+function compass(sc,top){
+  const P=24,S=272,X=v=>P+(v+1)/2*S,Y=v=>P+(1-v)/2*S;
+  const ux=X(sc.eco),uy=Y(sc.aut),ix=X(top.x[1][0]),iy=Y(top.x[1][1]);
+  return `<svg class="compass" viewBox="0 0 320 320" role="img" aria-label="Bussola politica: economia ${Math.round(sc.eco*100)}, autorità ${Math.round(sc.aut*100)}">
+   <rect class="q1" x="${P}" y="${P}" width="${S/2}" height="${S/2}"/><rect class="q2" x="${P+S/2}" y="${P}" width="${S/2}" height="${S/2}"/>
+   <rect class="q3" x="${P}" y="${P+S/2}" width="${S/2}" height="${S/2}"/><rect class="q4" x="${P+S/2}" y="${P+S/2}" width="${S/2}" height="${S/2}"/>
+   ${[1,2,3,5,6,7].map(i=>`<line class="grid" x1="${P+i*S/8}" y1="${P}" x2="${P+i*S/8}" y2="${P+S}"/><line class="grid" x1="${P}" y1="${P+i*S/8}" x2="${P+S}" y2="${P+i*S/8}"/>`).join('')}
+   <line class="axisl" x1="${P+S/2}" y1="${P}" x2="${P+S/2}" y2="${P+S}"/><line class="axisl" x1="${P}" y1="${P+S/2}" x2="${P+S}" y2="${P+S/2}"/>
+   <text class="ql" x="${P+6}" y="${P+14}">Sinistra autoritaria</text><text class="ql" x="${P+S-6}" y="${P+14}" text-anchor="end">Destra autoritaria</text>
+   <text class="ql" x="${P+6}" y="${P+S-7}">Sinistra libertaria</text><text class="ql" x="${P+S-6}" y="${P+S-7}" text-anchor="end">Destra libertaria</text>
+   <text class="al" x="160" y="15" text-anchor="middle">AUTORITÀ</text><text class="al" x="160" y="314" text-anchor="middle">LIBERTÀ</text>
+   <text class="al" x="12" y="160" text-anchor="middle" transform="rotate(-90 12 160)">UGUAGLIANZA</text><text class="al" x="308" y="160" text-anchor="middle" transform="rotate(90 308 160)">MERCATO</text>
+   <circle class="ring" cx="${ix}" cy="${iy}" r="7"/>
+   <circle class="you" cx="${ux}" cy="${uy}" r="8"/>
+  </svg>`;
+}
+function rankBy(list,sc,vi){ return list.map(x=>({x,d:dist(sc,x[vi])})).sort((a,b)=>a.d-b.d); }
+function family(sc){
+  if(sc.sov>=.3) return ['Indipendentismo','Vuoi una Sardegna sovrana. Il resto delle tue risposte dice che tipo di Repubblica hai in mente e come pensi di arrivarci.'];
+  if(sc.ide>=.3) return ['Sardismo','Identità sarda forte, ma dentro la cornice dello Stato italiano: è autonomismo con un cuore identitario. Non è indipendentismo, e anzi spesso gli indipendentisti lo combattono.'];
+  if(sc.sov>-.4) return ['Autonomismo','La specialità sarda va difesa e rafforzata, ma la Sardegna resta una regione italiana. L\'identità non è il centro del tuo discorso politico.'];
+  return ['Unionismo','La Sardegna è Italia e basta. Lo Statuto speciale è al massimo uno strumento amministrativo.'];
+}
+
+/* ===================== STATO ===================== */
+let ans = new Array(Q.length).fill(null), idx = 0, view = 'intro';
+try{ const s=JSON.parse(localStorage.getItem('bps2')||'null'); if(s&&s.ans&&s.ans.length===Q.length){ans=s.ans; idx=s.idx||0; if(s.view==='result'||s.view==='q') view=s.view;} }catch(e){}
+function save(){ try{localStorage.setItem('bps2',JSON.stringify({ans,idx,view}))}catch(e){} }
+const app = document.getElementById('app');
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(){ save(); window.scrollTo({top:0}); ({intro,q:question,stage,result})[view](); }
+
+function intro(){
+  const started = ans.some(a=>a!==null);
+  app.innerHTML = `<div class="stack-lg">
+   <div class="stack">
+    <span class="eyebrow">Sa bússola · edizione indipendentista</span>
+    <h1>Bússola Politica Sarda</h1>
+    <p class="lede">${Q.length} affermazioni per capire dove ti collochi nella politica sarda e in quella del mondo. Alla fine ottieni la tua famiglia politica, l'ideologia sarda più vicina fra ${IDEO.length}, l'ideologia internazionale fra ${INTL.length} con la bussola classica, l'affinità con ${PARTIES.length} partiti sardi e ${WPARTIES.length} partiti e movimenti del mondo, e i personaggi più simili a te fra ${FIGS.length} sardi e ${WFIGS.length} internazionali.</p>
+   </div>
+   <div class="note"><strong>Sardismo non è indipendentismo.</strong> In questo test il sardismo è trattato come autonomismo con una forte identità, che governa dentro lo Stato italiano. L'indipendentismo è una tradizione distinta e in competizione, che punta a una Repubblica di Sardegna. Per questo identità e sovranità sono due assi separati.</div>
+   <div class="facts"><span><b>${AX.length}</b> assi</span><span><b>${Q.length}</b> domande</span><span><b>${IDEO.length+INTL.length}</b> ideologie</span><span><b>${PARTIES.length+WPARTIES.length}</b> partiti e movimenti</span><span><b>${FIGS.length+WFIGS.length}</b> personaggi</span><span>circa <b>15</b> minuti</span></div>
+   <div class="row">
+     <button class="btn" id="go">${started?'Riprendi da dove eri':'Comincia'}</button>
+     ${started?'<button class="btn ghost" id="reset">Ricomincia da capo</button>':''}
+   </div>
+   <p class="small muted">Le domande guardano la politica sarda dal punto di vista dell'indipendentismo: molte servono a distinguere le correnti indipendentiste tra loro. Alcune sono volutamente balorde.</p>
+  </div>`;
+  go.onclick=()=>{view='q'; render()};
+  if(started) reset.onclick=()=>{ans.fill(null);idx=0;view='q';render()};
+}
+
+function question(){
+  const q=Q[idx], b=BLOCKS[q.block];
+  const done = Math.round(100*idx/Q.length);
+  app.innerHTML = `<div class="stack-lg">
+   <div class="stack">
+    <div class="qhead"><span class="eyebrow">${esc(b.t)}</span><span class="counter">${idx+1} / ${Q.length}</span></div>
+    <div class="prog"><i style="width:${done}%"></i></div>
+    <div class="stages">${['Inizio',...STAGES.map((s,i)=>'Tappa '+(i+1)),'Risultato'].map((t,i)=>`<span class="${(i===0||idx>=[0,...STAGES,Q.length][i])?'on':''}">${t}</span>`).join('')}</div>
+   </div>
+   <p class="qtext">${esc(q.text)}</p>
+   <div class="opts" role="group" aria-label="Risposte">
+     ${OPTS.map((o,i)=>`<button class="opt ${ans[idx]===o.v?'sel':''}" data-v="${o.v}" id="opt${i}"><span>${o.t}</span><span class="k">${i+1}</span></button>`).join('')}
+   </div>
+   <div class="row" style="justify-content:space-between">
+     <button class="link" id="back">${idx===0?'Torna all\'inizio':'Domanda precedente'}</button>
+     ${ans[idx]!==null&&idx<Q.length-1?'<button class="link" id="fwd">Avanti</button>':''}
+   </div>
+  </div>`;
+  app.querySelectorAll('.opt').forEach(el=>el.onclick=()=>pick(+el.dataset.v));
+  back.onclick=()=>{ if(idx===0){view='intro'} else idx--; render(); };
+  const f=document.getElementById('fwd'); if(f) f.onclick=()=>{idx++;render()};
+}
+function pick(v){
+  ans[idx]=v;
+  if(idx===Q.length-1){ view='result'; return render(); }
+  idx++;
+  if(STAGES.includes(idx)) view='stage';
+  render();
+}
+document.addEventListener('keydown',e=>{ if(view==='q'&&/^[1-5]$/.test(e.key)) pick(OPTS[+e.key-1].v); });
+
+function stage(){
+  const n=STAGES.indexOf(idx), sc=scores(ans), fam=family(sc);
+  app.innerHTML = `<div class="stack-lg">
+    <div class="stack"><span class="stage-num">${n+1}/3</span><h2>${STAGE_TXT[n][0]}</h2><p class="lede">${STAGE_TXT[n][1]}</p></div>
+    <p class="muted">Per ora l'ago punta verso <b style="color:var(--gold)">${fam[0]}</b>. Può ancora cambiare.</p>
+    <div><button class="btn" id="cont">Continua</button></div>
+  </div>`;
+  cont.onclick=()=>{view='q';render()};
+}
+
+function axisBar(a,v){
+  const r = Math.round((v+1)*50), l=100-r;
+  return `<div class="axis"><div class="name">${a.name}</div>
+   <div class="lab"><span>${a.l}</span><span>${a.r}</span></div>
+   <div class="bar" role="img" aria-label="${a.name}: ${a.l} ${l}%, ${a.r} ${r}%"><div class="l" style="width:${l}%"></div><div class="r"></div>
+   <div class="val"><b>${l}%</b><b>${r}%</b></div></div></div>`;
+}
+
+function result(){
+  const sc=scores(ans), fam=family(sc);
+  const ideos=rankBy(IDEO,sc,1), parties=rankBy(PARTIES,sc,2), figs=rankBy(FIGS,sc,2);
+  const top=ideos[0], intl=rankIntl(sc), it=intl[0];
+  const far=figs[figs.length-1];
+  const wp=rankW(WPARTIES,sc,3), wf=rankW(WFIGS,sc,2), wfar=wf[wf.length-1];
+  app.innerHTML = `<div class="stack-lg">
+   <div class="stack"><span class="eyebrow">Il tuo risultato</span><h1>Bússola Politica Sarda</h1></div>
+
+   <section class="family stack">
+     <div><span class="tag">${fam[0]}</span></div>
+     <p>${fam[1]}</p>
+   </section>
+
+   <section class="stack">
+     <span class="eyebrow">Sul piano sardo</span>
+     <div class="row" style="justify-content:space-between;align-items:baseline"><p class="match-big">${esc(top.x[0])}</p><span class="pct">${pct(top.d)}%</span></div>
+     <p class="lede">${esc(top.x[2])}</p>
+     <div class="list">${ideos.slice(1,6).map(o=>`<div class="item"><span class="nm">${esc(o.x[0])}</span><span class="pct">${pct(o.d)}%</span><div class="meter"><i style="width:${pct(o.d)}%"></i></div></div>`).join('')}</div>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <span class="eyebrow">Sul piano internazionale</span>
+     <div class="intl">
+       <div class="stack" style="min-width:0">
+         <p class="muted small">Fuori dalla questione sarda, con gli assi classici dei test politici, la tua ideologia è:</p>
+         <div class="row" style="justify-content:space-between;align-items:baseline"><p class="match-big">${esc(it.x[0])}</p><span class="pct">${ipct(it.d)}%</span></div>
+         <p>${esc(it.x[2])}</p>
+         <div class="legend small"><span><i class="lg-you"></i>Tu</span><span><i class="lg-ring"></i>${esc(it.x[0])}</span></div>
+       </div>
+       <div class="cwrap">${compass(sc,it)}</div>
+     </div>
+     <div class="list">${intl.slice(1,6).map(o=>`<div class="item"><span class="nm">${esc(o.x[0])}</span><span class="pct">${ipct(o.d)}%</span><div class="meter"><i style="width:${ipct(o.d)}%"></i></div></div>`).join('')}</div>
+   </section>
+
+   <hr>
+   <section class="stack-lg">
+     <div class="stack"><span class="eyebrow">I tuoi assi</span><h2>Dove punta l'ago</h2></div>
+     ${AX.map(a=>axisBar(a,sc[a.k])).join('')}
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Affinità con i partiti</span><h2>I partiti, dal più vicino al più lontano</h2></div>
+     <div class="list">${parties.map(o=>{const f=FAM[o.x[1]];return `<div class="item"><span class="nm">${esc(o.x[0])}<span class="chip ${f[1]}">${f[0]}</span></span><span class="pct">${pct(o.d)}%</span><div class="meter"><i style="width:${pct(o.d)}%"></i></div><span class="sub">${esc(o.x[3])}</span></div>`}).join('')}</div>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Personaggi</span><h2>Ti somigliano, in Sardegna</h2></div>
+     <div class="figs">
+       ${figs.slice(0,3).map(o=>`<div class="fig"><h3>${esc(o.x[0])}</h3><span class="pct">${o.x[1]?esc(o.x[1])+' · ':''}${pct(o.d)}%</span><span class="small muted">${esc(o.x[3])}</span></div>`).join('')}
+       <div class="fig far"><span class="eyebrow" style="color:var(--red)">Il più lontano</span><h3>${esc(far.x[0])}</h3><span class="small muted">${esc(far.x[3])}</span></div>
+     </div>
+   </section>
+
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Nel mondo</span><h2>Partiti e movimenti internazionali</h2><p class="muted small">Calcolati su economia, Stato, società e politica estera. I primi otto, più il più lontano.</p></div>
+     <div class="list">${[...wp.slice(0,8),wp[wp.length-1]].map((o,i)=>`<div class="item"${i===8?' style="margin-top:12px"':''}><span class="nm">${i===8?'<span class="eyebrow" style="color:var(--red)">Il più lontano · </span>':''}${esc(o.x[0])}<span class="chip ${o.x[2]?'ind':''}">${esc(o.x[1])}</span></span><span class="pct">${wpct(o.d)}%</span><div class="meter"><i style="width:${wpct(o.d)}%"></i></div><span class="sub">${esc(o.x[4])}</span></div>`).join('')}</div>
+     <p class="small muted"><span class="chip ind" style="margin-left:0">Oro</span> nazioni senza Stato.</p>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Personaggi nel mondo</span><h2>Ti somigliano, fuori dall'isola</h2></div>
+     <div class="figs">
+       ${wf.slice(0,3).map(o=>`<div class="fig"><h3>${esc(o.x[0])}</h3><span class="pct">${o.x[1]?esc(o.x[1])+' · ':''}${wpct(o.d)}%</span><span class="small muted">${esc(o.x[3])}</span></div>`).join('')}
+       <div class="fig far"><span class="eyebrow" style="color:var(--red)">Il più lontano</span><h3>${esc(wfar.x[0])}</h3><span class="small muted">${esc(wfar.x[3])}</span></div>
+     </div>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="row">
+       <button class="btn" id="copy">Copia il risultato</button>
+       <button class="btn ghost" id="redo">Rifai il test</button>
+       <button class="btn ghost" id="review">Rivedi le risposte</button>
+     </div>
+     <textarea id="copybox" hidden readonly></textarea>
+     <p class="small muted" id="copymsg" aria-live="polite"></p>
+   </section>
+
+   <details class="small muted">
+     <summary>Come funziona e fonti</summary>
+     <div class="stack" style="margin-top:12px">
+      <p>Ogni risposta sposta l'ago su uno degli otto assi, da −100 a +100. Ideologie, partiti e personaggi hanno una posizione stimata sugli stessi assi; l'affinità è la vicinanza tra la tua posizione e la loro, con un peso maggiore per l'asse della sovranità.</p>
+      <p>Le posizioni di partiti e personaggi sono stime basate su posizioni pubbliche, alleanze elettorali del 2024 e prese di posizione recenti (Pratobello 24, basi, energia). Sono semplificazioni, non schede ufficiali.</p>
+      <p>Partiti e personaggi internazionali sono confrontati solo su quattro assi che hanno senso fuori dalla Sardegna (economia, Stato, società, politica estera), perché sovranità e identità sarde non si applicano a loro.</p>
+      <p>La famiglia politica dipende prima dalla sovranità, poi dall'identità: con sovranità alta sei indipendentista anche con identità civica; con sovranità bassa e identità alta sei sardista.</p>
+      <p><a href="https://it.wikipedia.org/wiki/Indipendentismo_sardo" target="_blank" rel="noopener">Indipendentismo sardo</a> · <a href="https://it.wikipedia.org/wiki/Elezioni_regionali_in_Sardegna_del_2024" target="_blank" rel="noopener">Regionali 2024</a> · <a href="https://www.linkoristano.it/2024/06/29/non-piu-disuniti-gli-indipendentisti-sardi-scelgono-una-nuova-via-con-republica/" target="_blank" rel="noopener">Nascita di Repùblica</a> · <a href="https://it.wikipedia.org/wiki/Sardigna_Natzione_Indipendentzia" target="_blank" rel="noopener">SNI</a></p>
+     </div>
+   </details>
+  </div>`;
+  const txt = `Bússola Politica Sarda\nFamiglia: ${fam[0]}\nIdeologia sarda: ${top.x[0]} (${pct(top.d)}%)\nIdeologia internazionale: ${it.x[0]} (${ipct(it.d)}%)\n`+
+    AX.map(a=>`${a.name}: ${a.l} ${100-Math.round((sc[a.k]+1)*50)}% · ${a.r} ${Math.round((sc[a.k]+1)*50)}%`).join('\n')+
+    `\nPartito più vicino: ${parties[0].x[0]} (${pct(parties[0].d)}%)\nNel mondo: ${wp[0].x[0]} (${wpct(wp[0].d)}%)\nPersonaggio: ${figs[0].x[0]} · nel mondo: ${wf[0].x[0]}`;
+  copy.onclick=()=>{
+    const fb=()=>{copybox.hidden=false;copybox.value=txt;copybox.select();copymsg.textContent='Testo selezionato: copialo a mano.'};
+    try{ navigator.clipboard.writeText(txt).then(()=>copymsg.textContent='Risultato copiato.',fb); }catch(e){fb()}
+  };
+  redo.onclick=()=>{ans.fill(null);idx=0;view='intro';render()};
+  review.onclick=()=>{idx=0;view='q';render()};
+}
+
+render();
+</script>
+
+</body></html>
