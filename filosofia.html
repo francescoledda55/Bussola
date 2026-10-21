@@ -1,0 +1,944 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Bússola Filosofica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Libre+Franklin:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: colonna unica da lettura (max 720px), striscia tessile in testa, schermate che si alternano: intro → domande → tappe → risultato */
+:root{
+  --bg:#f3f0e8; --surface:#fbf9f4; --ink:#1d1b17; --muted:#6a6355; --line:#d9d2c1;
+  --gold:#a97c1c; --gold-soft:#f0e3c2; --red:#9e2a1f; --track:#e7e1d2;
+  --fd:"Libre Baskerville", Georgia, "Times New Roman", serif;
+  --fb:"Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --fm:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14130f; --surface:#1d1b16; --ink:#efe9da; --muted:#a69d89; --line:#36322a;
+  --gold:#d9ae4e; --gold-soft:#3a2f17; --red:#d8604f; --track:#2b2821; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#14130f; --surface:#1d1b16; --ink:#efe9da; --muted:#a69d89; --line:#36322a;
+  --gold:#d9ae4e; --gold-soft:#3a2f17; --red:#d8604f; --track:#2b2821; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+.band{height:14px;margin-inline:-16px;background:
+  repeating-linear-gradient(90deg,transparent 0 6px,var(--gold) 6px 8px,transparent 8px 14px),
+  repeating-linear-gradient(45deg,var(--red) 0 4px,transparent 4px 10px);
+  opacity:.85}
+.wrap{max-width:720px;margin:0 auto;padding-block:32px 0}
+.eyebrow{font-family:var(--fm);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+h1,h2,h3{font-family:var(--fd);font-weight:700;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,6vw,3.1rem);line-height:1.1}
+h2{font-size:clamp(1.4rem,4vw,1.9rem);line-height:1.2}
+h3{font-size:1.1rem}
+p{margin:0}
+.lede{font-size:1.08rem;max-width:62ch;color:var(--ink)}
+.muted{color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-lg{display:flex;flex-direction:column;gap:32px}
+.note{border-left:3px solid var(--red);padding:12px 16px;background:var(--surface);font-size:.95rem}
+.note strong{color:var(--red)}
+.facts{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--fm);font-size:13px;color:var(--muted)}
+.facts b{color:var(--ink);font-weight:600}
+button{font:inherit;cursor:pointer;color:inherit}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);padding:12px 22px;font-weight:600;border-radius:2px}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:focus-visible,.opt:focus-visible,.link:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
+/* domanda */
+.qhead{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.counter{font-family:var(--fm);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.prog{height:4px;background:var(--track);position:relative}
+.prog i{position:absolute;inset:0 auto 0 0;background:var(--gold);transition:width .25s}
+.stages{display:flex;justify-content:space-between;font-family:var(--fm);font-size:11px;color:var(--muted)}
+.stages span.on{color:var(--gold)}
+.qtext{font-family:var(--fd);font-size:clamp(1.25rem,3.6vw,1.6rem);line-height:1.35;min-height:4.2em;text-wrap:pretty}
+.opts{display:grid;gap:8px}
+.opt{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;padding:13px 16px;border:1px solid var(--line);background:var(--surface);border-radius:2px;transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--gold)}
+.opt.sel{border-color:var(--gold);background:var(--gold-soft)}
+.opt .k{font-family:var(--fm);font-size:12px;color:var(--muted)}
+.link{background:none;border:0;padding:4px 0;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+
+/* tappa */
+.stage-num{font-family:var(--fd);font-size:4rem;line-height:1;color:var(--gold)}
+
+/* risultati */
+.family{border:1px solid var(--line);background:var(--surface);padding:20px}
+.family .tag{display:inline-block;font-family:var(--fm);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;background:var(--gold);color:var(--bg)}
+.match-big{font-family:var(--fd);font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.15}
+.pct{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.axis{display:grid;gap:6px}
+.axis .lab{display:flex;justify-content:space-between;font-size:14px;gap:8px}
+.axis .lab span:first-child,.axis .lab span:last-child{min-width:0}
+.axis .name{font-family:var(--fm);font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:center}
+.bar{height:22px;background:var(--track);position:relative;display:flex}
+.bar .l{background:var(--ink);height:100%}
+.bar .r{background:var(--gold);height:100%;flex:1}
+.bar .val{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 8px;font-family:var(--fm);font-size:12px;color:var(--bg);mix-blend-mode:normal}
+.bar .val b{font-weight:600}
+.bar .val b:last-child{color:var(--ink)}
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
+.item .nm{font-weight:600;min-width:0}
+.item .sub{grid-column:1/-1;font-size:14px;color:var(--muted)}
+.item .meter{grid-column:1/-1;height:6px;background:var(--track)}
+.item .meter i{display:block;height:100%;background:var(--gold)}
+.chip{font-family:var(--fm);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border:1px solid var(--line);color:var(--muted);margin-left:6px;white-space:nowrap}
+.chip.ind{border-color:var(--gold);color:var(--gold)}
+.chip.sar{border-color:var(--red);color:var(--red)}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fig{border-top:2px solid var(--gold);padding-top:10px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.fig.far{border-top-color:var(--red)}
+.fig .pct{font-size:13px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+.small{font-size:13px}
+.small a{color:var(--muted)}
+details summary{cursor:pointer;font-weight:600}
+.intl{display:grid;grid-template-columns:1fr minmax(0,320px);gap:24px;align-items:center}
+@media (max-width:640px){.intl{grid-template-columns:1fr}}
+.cwrap{max-width:320px;width:100%;justify-self:center}
+.compass{width:100%;height:auto;display:block}
+.compass .q1{fill:var(--red);opacity:.16}.compass .q2{fill:var(--ink);opacity:.1}
+.compass .q3{fill:var(--gold);opacity:.18}.compass .q4{fill:var(--muted);opacity:.14}
+.compass .grid{stroke:var(--line);stroke-width:1}
+.compass .axisl{stroke:var(--muted);stroke-width:1.5}
+.compass .ql{fill:var(--muted);font-family:var(--fm);font-size:9px}
+.compass .al{fill:var(--ink);font-family:var(--fm);font-size:9px;letter-spacing:.1em}
+.compass .you{fill:var(--gold);stroke:var(--bg);stroke-width:2.5}
+.compass .ring{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 2}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-2px}
+.lg-you{background:var(--gold)}.lg-ring{border:1.5px dashed var(--ink)}
+#copybox{width:100%;min-height:120px;font-family:var(--fm);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);padding:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+/* aggiunte della Bússola Filosofica */
+.lede a,.note a{color:inherit;text-underline-offset:3px}
+.modes{display:grid;gap:10px}
+.mode{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:16px 18px;border:1px solid var(--line);background:var(--surface);border-radius:2px;transition:border-color .12s,background .12s}
+.mode:hover{border-color:var(--gold);background:var(--gold-soft)}
+.mode:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.mode .mt{font-family:var(--fd);font-weight:700;font-size:1.2rem}
+.mode .md{font-family:var(--fm);font-size:12px;color:var(--muted)}
+.sardi{border:1px solid var(--line);background:var(--surface);padding:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+.pos{font-size:15px}
+.knot{border-left:3px solid var(--gold);padding:10px 16px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.knot.quirk{border-left-color:var(--muted)}
+.knot p{font-size:15px}
+.bridge{border-left:3px solid var(--red);padding:10px 16px;background:var(--surface)}
+.pairs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.pair{border:1px solid var(--line);padding:12px;display:grid;gap:12px;min-width:0}
+.mini .lab{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);align-items:baseline}
+.mini .lab b{font-family:var(--fm);font-weight:600;color:var(--ink);text-transform:uppercase;letter-spacing:.06em;font-size:11px;text-align:center}
+.mini .lab span{min-width:0}
+.mini .track{position:relative;height:8px;background:var(--track);margin-top:4px}
+.mini .track:after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--muted)}
+.mini .track i{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);transform:translate(-50%,-50%)}
+details.area{border-top:1px solid var(--line);padding-top:12px}
+details.area summary{display:flex;align-items:baseline;gap:12px;font-family:var(--fd);font-size:1.1rem;list-style:none}
+details.area summary::-webkit-details-marker{display:none}
+details.area summary:after{content:"+";font-family:var(--fm);color:var(--gold);margin-left:auto}
+details.area[open] summary:after{content:"−"}
+details.area summary .small{font-family:var(--fb);font-weight:400}
+</style>
+
+<div class="band" aria-hidden="true"></div>
+<main class="wrap" id="app"></main>
+
+<script>
+/* ===================== AREE, ASSI E DOMANDE =====================
+   Ogni asse va da −1 (polo sinistro, l) a +1 (polo destro, r).
+   lp / rp: come il risultato descrive chi sta su quel polo.
+   Domande: [testo, direzione, peso]. Direzione +1 = essere d'accordo spinge verso il polo destro.
+   Per ogni asse le prime tre domande sono della versione essenziale, le ultime due solo della completa. */
+const PARTS = [
+ {t:'Il mondo', d:'Che cosa esiste, che cos’è la mente, che cosa ci dice la scienza.'},
+ {t:'Il conoscere', d:'Come sappiamo quello che sappiamo, cosa fanno le parole, che cos’è il bello.'},
+ {t:'Il bene', d:'Come si decide cosa è giusto, da dove viene la morale, chi siamo e cosa ci rende felici.'},
+ {t:'La città e il sacro', d:'Società, potere, storia e Dio.'}
+];
+const AREAS = [
+ {k:'ess', part:0, t:'Essere', sub:'Metafisica · che cosa esiste', ax:[
+  {k:'mat', name:'Realtà', l:'Solo materia', r:'Anche spirito',
+   lp:'pensi che la realtà sia, in fondo, soltanto materia ed energia', rp:'pensi che la realtà non si esaurisca nella materia', q:[
+   ['Tutto ciò che esiste, alla fine, è fatto di materia ed energia.',-1],
+   ['Esistono realtà vere che nessuno strumento scientifico potrà mai misurare.',1],
+   ['Quando moriamo, di noi non resta nulla oltre al corpo e al ricordo che lasciamo.',-1],
+   ['Numeri, verità logiche e leggi morali esistono davvero, anche se non sono fatti di niente.',1],
+   ['Parlare di «spirito» è solo un modo poetico di indicare processi fisici molto complessi.',-1]]},
+  {k:'lib', name:'Libertà', l:'Libero arbitrio', r:'Determinismo',
+   lp:'sei convinto che le nostre scelte siano davvero libere', rp:'pensi che le nostre scelte siano determinate da cause che non controlliamo', q:[
+   ['Le mie scelte sono davvero mie: avrei potuto fare diversamente.',-1],
+   ['Se conoscessimo tutto il passato di una persona, potremmo prevedere ogni sua decisione.',1],
+   ['La sensazione di scegliere liberamente è un’illusione prodotta dal cervello.',1],
+   ['Anche chi cresce in un ambiente terribile resta responsabile di ciò che diventa.',-1],
+   ['Geni, educazione e caso spiegano chi siamo molto più della nostra volontà.',1]]},
+  {k:'div', name:'Le cose', l:'Nature stabili', r:'Tutto diviene',
+   lp:'credi che ogni cosa abbia una natura propria e stabile', rp:'vedi il mondo come un flusso, in cui le cose sono momenti di un processo', q:[
+   ['Ogni cosa ha una natura propria, un «che cos’è» che non dipende da come la chiamiamo.',-1],
+   ['Le categorie con cui dividiamo il mondo (specie, colori, generi) sono etichette nostre, non confini reali.',1],
+   ['Niente resta uguale: la realtà è un flusso, e le cose sono momenti di un processo.',1],
+   ['Una quercia è già «contenuta» nella ghianda: ogni essere tende a diventare ciò che è.',-1],
+   ['Dire che qualcosa è «contro natura» non ha senso, perché la natura non ha un progetto.',1]]}
+ ]},
+ {k:'men', part:0, t:'Mente', sub:'Filosofia della mente · chi pensa in noi', ax:[
+  {k:'dua', name:'Mente', l:'È il cervello', r:'È più del cervello',
+   lp:'pensi che la mente sia ciò che fa il cervello', rp:'pensi che la mente non si riduca al cervello', q:[
+   ['La mente è semplicemente ciò che fa il cervello.',-1],
+   ['Anche conoscendo ogni neurone di una persona, non sapremmo che cosa si prova a essere lei.',1],
+   ['Un giorno le neuroscienze spiegheranno completamente pensieri ed emozioni.',-1],
+   ['Il rosso che vedo, il dolore che sento: questa esperienza interiore non si riduce a impulsi elettrici.',1],
+   ['Se si potesse copiare perfettamente il mio cervello in un computer, quella copia penserebbe come me.',-1]]},
+  {k:'ego', name:'Io', l:'Io stabile', r:'Io come flusso',
+   lp:'senti che dentro di te c’è un io che resta lo stesso', rp:'vedi l’io come un insieme di ricordi e abitudini che cambia di continuo', q:[
+   ['C’è un «io» che resta lo stesso dalla mia infanzia a oggi.',-1],
+   ['Quello che chiamo «io» è un insieme di ricordi, abitudini e sensazioni che cambiano continuamente.',1],
+   ['Fra vent’anni sarò una persona diversa, più di quanto mi piaccia ammettere.',1],
+   ['Sotto i ruoli e gli umori c’è un nucleo di me che nessuno può toccare.',-1],
+   ['L’idea di un io separato dal resto del mondo è la radice di molta sofferenza.',1]]},
+  {k:'cos', name:'Coscienza', l:'Solo umana', r:'Diffusa',
+   lp:'vedi nella coscienza ciò che distingue nettamente l’essere umano', rp:'pensi che la coscienza sia più diffusa di quanto crediamo, negli animali e forse oltre', q:[
+   ['Un cane prova emozioni vere, non solo reazioni automatiche.',1],
+   ['Una macchina, per quanto intelligente, non potrà mai sentire davvero qualcosa.',-1],
+   ['Pensiero e coscienza separano nettamente l’essere umano da tutto il resto.',-1],
+   ['Forse anche le piante, a loro modo, percepiscono qualcosa.',1],
+   ['Se un’intelligenza artificiale dicesse in modo convincente di soffrire, dovremmo prenderla sul serio.',1]]}
+ ]},
+ {k:'sci', part:0, t:'Scienza e tecnica', sub:'Filosofia della scienza · che cosa ci dicono le teorie', ax:[
+  {k:'sci', name:'Scienza', l:'Descrive il vero', r:'Modello utile',
+   lp:'pensi che la scienza descriva le cose come stanno davvero', rp:'vedi le teorie scientifiche come modelli utili, non come la verità ultima', q:[
+   ['Elettroni, geni e buchi neri esistono davvero, così come li descrive la scienza.',-1],
+   ['Le teorie scientifiche sono strumenti per prevedere, non descrizioni della realtà ultima.',1],
+   ['Le teorie di oggi saranno sostituite, come quelle di ieri: non sono «la verità».',1],
+   ['La scienza si avvicina sempre di più a come stanno davvero le cose.',-1],
+   ['Anche la scienza è influenzata dagli interessi e dalla cultura di chi la fa.',1]]},
+  {k:'tec', name:'Tecnica', l:'Fiducia', r:'Sospetto',
+   lp:'hai fiducia nella tecnica come strumento nelle nostre mani', rp:'sospetti che la tecnica ci cambi più di quanto noi governiamo lei', q:[
+   ['La tecnologia è uno strumento neutro: dipende tutto da come la usiamo.',-1],
+   ['La tecnica cambia il nostro modo di essere umani più di quanto noi controlliamo lei.',1],
+   ['I problemi creati dalla tecnologia si risolveranno con altra tecnologia.',-1],
+   ['Saper fare una cosa non significa che sia giusto farla: alcune ricerche andrebbero fermate.',1],
+   ['Vivevamo in modo più umano quando avevamo meno macchine.',1]]}
+ ]},
+ {k:'con', part:1, t:'Conoscenza', sub:'Gnoseologia · come sappiamo quello che sappiamo', ax:[
+  {k:'rag', name:'Fonte', l:'Ragione', r:'Esperienza',
+   lp:'pensi che la ragione possa conoscere verità che l’esperienza non dà', rp:'pensi che tutto ciò che sappiamo venga, alla fine, dall’esperienza', q:[
+   ['Alcune verità si possono conoscere solo ragionando, senza bisogno di osservare il mondo.',-1],
+   ['Tutto ciò che sappiamo viene, in ultima analisi, dai sensi e dall’esperienza.',1],
+   ['Nasciamo già con alcune idee e capacità di comprendere, prima di ogni esperienza.',-1],
+   ['Una teoria elegante e coerente vale poco finché non viene confermata dai fatti.',1],
+   ['La matematica scopre verità necessarie, non semplici abitudini della mente.',-1]]},
+  {k:'rea', name:'Il mondo conosciuto', l:'Com’è', r:'Come lo costruiamo',
+   lp:'credi che si possa conoscere il mondo com’è davvero', rp:'pensi che conosciamo il mondo sempre attraverso filtri che lo costruiscono', q:[
+   ['Il mondo è com’è, indipendentemente da come lo percepiamo o ne parliamo.',-1],
+   ['Non vediamo mai le cose come sono, ma sempre attraverso i filtri della nostra mente e della nostra cultura.',1],
+   ['Ciò che chiamiamo «realtà» è in gran parte una costruzione condivisa.',1],
+   ['Se l’umanità sparisse, montagne, stelle e leggi della fisica resterebbero esattamente come sono.',-1],
+   ['Non esistono fatti, solo interpretazioni.',1]]},
+  {k:'dub', name:'Certezza', l:'Certezze possibili', r:'Dubbio',
+   lp:'pensi che alcune certezze siano possibili e necessarie', rp:'tieni il dubbio come compagno di strada su quasi tutto', q:[
+   ['Ci sono cose di cui posso essere assolutamente certo.',-1],
+   ['Qualunque cosa io creda, devo ammettere che potrei sbagliarmi.',1],
+   ['Chi dubita di tutto non è saggio, è solo paralizzato.',-1],
+   ['Sulle grandi domande (Dio, il bene, il senso della vita) è più onesto sospendere il giudizio.',1],
+   ['Il buon senso è una guida affidabile, anche quando non lo si può dimostrare.',-1]]},
+  {k:'vie', name:'Vie del sapere', l:'Solo la scienza', r:'Molte vie',
+   lp:'riconosci come vero sapere solo ciò che si può verificare', rp:'pensi che arte, fede ed esperienza di vita insegnino verità che la scienza non raggiunge', q:[
+   ['Se una cosa non si può verificare scientificamente, non possiamo dire di saperla.',-1],
+   ['La poesia, la religione e l’esperienza di vita insegnano verità che la scienza non raggiunge.',1],
+   ['Le tradizioni antiche contengono una saggezza che vale anche quando non sappiamo spiegarla.',1],
+   ['Intuizioni e sensazioni di pancia sono fonti di conoscenza poco affidabili.',-1],
+   ['Una persona la si conosce davvero più amandola che studiandola.',1]]}
+ ]},
+ {k:'lin', part:1, t:'Linguaggio', sub:'Filosofia del linguaggio · che cosa fanno le parole', ax:[
+  {k:'lin', name:'Parole', l:'Specchio del mondo', r:'Costruiscono il mondo',
+   lp:'vedi le parole come etichette per un mondo che esiste comunque', rp:'pensi che ogni lingua costruisca un modo di vedere il mondo', q:[
+   ['Le parole sono etichette: le cose restano uguali in qualunque lingua le si nomini.',-1],
+   ['Chi parla una lingua diversa vede, in parte, un mondo diverso.',1],
+   ['Perdere una lingua significa perdere un modo unico di pensare il mondo.',1],
+   ['Dare un nome nuovo a qualcosa può cambiare la cosa stessa, non solo il modo di vederla.',1],
+   ['Qualsiasi pensiero si può tradurre in qualsiasi lingua senza perdere nulla di essenziale.',-1]]},
+  {k:'int', name:'Interpretare', l:'Un senso giusto', r:'Senso aperto',
+   lp:'pensi che un testo abbia un senso giusto da ritrovare', rp:'pensi che il senso di un testo nasca anche da chi lo legge', q:[
+   ['Un testo vuol dire ciò che il suo autore intendeva dire.',-1],
+   ['Ogni lettore, leggendo, cambia il senso del testo che legge.',1],
+   ['Esistono interpretazioni giuste e interpretazioni sbagliate di una poesia o di una legge.',-1],
+   ['Il passato non si conosce mai «com’era»: lo si racconta sempre dal presente.',1],
+   ['Un simbolo, come una bandiera o un’immagine sacra, può voler dire cose opposte per persone diverse, e nessuna ha più ragione dell’altra.',1]]}
+ ]},
+ {k:'bel', part:1, t:'Bellezza', sub:'Estetica · che cos’è il bello', ax:[
+  {k:'bel', name:'Bellezza', l:'Oggettiva', r:'Soggettiva',
+   lp:'pensi che la bellezza abbia leggi valide per tutti', rp:'pensi che la bellezza stia negli occhi di chi guarda', q:[
+   ['La bellezza è negli occhi di chi guarda.',1],
+   ['Alcune opere sono oggettivamente più belle di altre, anche se a qualcuno non piacciono.',-1],
+   ['Proporzione, armonia e misura sono leggi della bellezza valide per tutti.',-1],
+   ['Sui gusti non si discute.',1],
+   ['Educare il gusto significa imparare a vedere una bellezza che c’era già.',-1]]},
+  {k:'art', name:'Arte', l:'Canone', r:'Rottura',
+   lp:'apprezzi l’arte che nasce dalla tradizione e dal mestiere', rp:'apprezzi l’arte che rompe le regole e disturba', q:[
+   ['L’arte più grande è quella che rompe le regole del suo tempo.',1],
+   ['Un artista deve prima padroneggiare la tradizione, e solo dopo può permettersi di innovare.',-1],
+   ['Un’opera che non vuole essere bella può comunque essere grande arte.',1],
+   ['Molta arte contemporanea è una presa in giro.',-1],
+   ['L’arte serve a disturbare e a far pensare più che a consolare.',1]]}
+ ]},
+ {k:'eti', part:2, t:'Etica', sub:'Etica normativa · come si decide cosa è giusto', ax:[
+  {k:'csq', name:'Criterio', l:'Conseguenze', r:'Doveri',
+   lp:'giudichi le azioni soprattutto dalle loro conseguenze', rp:'pensi che ci siano cose che non si fanno mai, qualunque sia il risultato', q:[
+   ['Un’azione è giusta se produce più bene che male per tutti i coinvolti.',-1],
+   ['Ci sono cose che non si fanno mai, anche se farle porterebbe a un risultato migliore.',1],
+   ['Mentire è sbagliato anche quando una bugia eviterebbe un dolore inutile.',1],
+   ['Sacrificare una persona per salvarne cinque è la scelta giusta.',-1],
+   ['Le buone intenzioni non bastano: conta come vanno a finire le cose.',-1]]},
+  {k:'vir', name:'Fuoco', l:'Azioni giuste', r:'Persone buone',
+   lp:'in etica guardi soprattutto alle regole e alle singole azioni', rp:'in etica guardi soprattutto al carattere, a che persona si diventa', q:[
+   ['In etica la domanda giusta non è «che cosa devo fare?», ma «che persona voglio diventare?».',1],
+   ['Una regola chiara vale più del giudizio personale, perché tutti possono applicarla.',-1],
+   ['Una persona buona si riconosce più dalle abitudini di ogni giorno che dalle grandi scelte.',1],
+   ['Per giudicare un’azione basta guardare l’azione, non chi la compie.',-1],
+   ['La saggezza pratica di una persona esperta vale più di qualsiasi teoria morale.',1]]},
+  {k:'cer', name:'Cerchio morale', l:'Prima i vicini', r:'Tutti uguali',
+   lp:'pensi di avere doveri più forti verso chi ti è vicino', rp:'pensi che la sofferenza di uno sconosciuto conti quanto quella di chi ami', q:[
+   ['Ho più doveri verso la mia famiglia e la mia comunità che verso sconosciuti lontani.',-1],
+   ['La sofferenza di uno sconosciuto dall’altra parte del mondo conta esattamente quanto quella di mio fratello.',1],
+   ['È giusto preferire i propri: è così che funzionano l’amore e la lealtà.',-1],
+   ['Se potessi salvare un bambino lontano o comprarmi qualcosa di superfluo, scegliere la seconda sarebbe sbagliato.',1],
+   ['La lealtà verso un gruppo è una virtù, non un pregiudizio.',-1]]},
+  {k:'viv', name:'Chi conta', l:'Solo l’uomo', r:'Tutti i viventi',
+   lp:'riconosci all’essere umano una dignità unica rispetto al resto della natura', rp:'pensi che animali e natura abbiano valore in sé, non solo per noi', q:[
+   ['Gli animali hanno valore in sé, non solo per l’utilità che hanno per noi.',1],
+   ['Una foresta o un fiume meritano rispetto anche se nessun essere umano ne trae vantaggio.',1],
+   ['L’essere umano ha una dignità che lo mette su un piano diverso da qualsiasi animale.',-1],
+   ['Allevare e uccidere animali per mangiarli è moralmente accettabile.',-1],
+   ['La natura esiste per essere coltivata e messa a frutto dall’uomo.',-1]]}
+ ]},
+ {k:'fon', part:2, t:'Fondamenti morali', sub:'Meta-etica · da dove viene la morale', ax:[
+  {k:'ogg', name:'Verità morali', l:'Oggettive', r:'Costruite',
+   lp:'pensi che bene e male siano oggettivi, validi per tutti', rp:'pensi che bene e male dipendano dalle culture e dalle epoche', q:[
+   ['Torturare un innocente per divertimento è sbagliato sempre e ovunque, qualunque cosa ne pensi una cultura.',-1],
+   ['Bene e male dipendono dalla cultura e dall’epoca in cui si vive.',1],
+   ['Le verità morali si scoprono, come quelle matematiche: non si inventano.',-1],
+   ['Quando diciamo «è ingiusto» esprimiamo soprattutto un sentimento, non un fatto.',1],
+   ['Non abbiamo il diritto di giudicare le usanze morali di altre società.',1]]},
+  {k:'rad', name:'Radice', l:'In Dio', r:'Nell’uomo',
+   lp:'pensi che il bene abbia la sua radice ultima in Dio', rp:'pensi che la morale nasca dall’uomo e dalla vita insieme', q:[
+   ['Senza Dio, alla fine, tutto sarebbe permesso.',-1],
+   ['La morale nasce dall’evoluzione e dalla vita sociale, non da un ordine superiore.',1],
+   ['Il bene è bene perché corrisponde a come Dio ha voluto il mondo.',-1],
+   ['Un’etica fondata sulla sola ragione umana è del tutto sufficiente.',1],
+   ['La coscienza è la voce di qualcosa di più grande di noi.',-1]]}
+ ]},
+ {k:'per', part:2, t:'Persona', sub:'Antropologia filosofica · chi siamo', ax:[
+  {k:'bon', name:'Natura umana', l:'Buona', r:'Ferita',
+   lp:'hai fiducia nella bontà di fondo degli esseri umani', rp:'vedi negli esseri umani un’inclinazione al male che va tenuta a freno', q:[
+   ['Le persone nascono buone: è la società che le rovina.',-1],
+   ['In ogni essere umano c’è un’inclinazione all’egoismo e al male che va tenuta a freno.',1],
+   ['Se tutti fossero educati bene, il crimine scomparirebbe quasi del tutto.',-1],
+   ['Senza regole e punizioni, la maggior parte delle persone si comporterebbe peggio.',1],
+   ['Anche le persone migliori portano dentro un fondo oscuro.',1]]},
+  {k:'rel', name:'Persona', l:'Individuo', r:'Relazione',
+   lp:'metti al centro l’individuo, che sceglie i propri legami', rp:'pensi che siamo fatti delle relazioni, dei luoghi e delle comunità a cui apparteniamo', q:[
+   ['Prima viene l’individuo con i suoi diritti; i legami vengono dopo e si scelgono.',-1],
+   ['Nessuno diventa sé stesso da solo: siamo fatti delle relazioni che abbiamo.',1],
+   ['Ci si può realizzare pienamente anche tagliando i ponti con la propria famiglia e la propria terra.',-1],
+   ['Il mio paese, la mia lingua e la mia famiglia non sono cose che ho: sono parte di chi sono.',1],
+   ['La massima realizzazione è diventare indipendenti da tutto e da tutti.',-1]]},
+  {k:'pla', name:'Destino', l:'Natura data', r:'Ci si inventa',
+   lp:'pensi che esista una natura umana che dice cosa ci fa fiorire', rp:'pensi che non nasciamo con un’essenza e che diventiamo ciò che scegliamo', q:[
+   ['Esiste una natura umana comune che stabilisce cosa ci fa fiorire e cosa ci fa male.',-1],
+   ['Non nasciamo con un’essenza: diventiamo ciò che scegliamo di essere.',1],
+   ['I limiti del corpo e della biologia vanno accettati, non superati.',-1],
+   ['Se la tecnologia potesse migliorare l’essere umano, con più intelligenza e più anni di vita, sarebbe giusto farlo.',1],
+   ['Ognuno ha il diritto di decidere da sé che cosa significa, per lui, una vita riuscita.',1]]}
+ ]},
+ {k:'esi', part:2, t:'Esistenza', sub:'Il senso della vita · come vivere', ax:[
+  {k:'sen', name:'Senso', l:'Da scoprire', r:'Da inventare',
+   lp:'credi che la vita abbia un senso da scoprire', rp:'pensi che il senso della vita ognuno lo costruisca da sé', q:[
+   ['La vita ha un senso che non dipende da me: il mio compito è scoprirlo.',-1],
+   ['Il senso della vita non è dato: ognuno se lo costruisce.',1],
+   ['In fondo l’universo è indifferente a noi, e va bene così.',1],
+   ['Ognuno di noi ha una vocazione, qualcosa per cui è fatto.',-1],
+   ['Anche una vita senza alcun senso ultimo può valere la pena di essere vissuta fino in fondo.',1]]},
+  {k:'fel', name:'Felicità', l:'Realizzarsi', r:'Distaccarsi',
+   lp:'cerchi la felicità nel realizzare desideri e progetti', rp:'cerchi la serenità desiderando di meno e accettando ciò che non dipende da te', q:[
+   ['Una vita felice è una vita in cui si realizzano i propri desideri e progetti.',-1],
+   ['La serenità si raggiunge desiderando di meno, non ottenendo di più.',1],
+   ['Bisogna imparare ad accettare con calma ciò che non dipende da noi.',1],
+   ['Le passioni forti sono il sale della vita, anche quando fanno soffrire.',-1],
+   ['L’ambizione e la voglia di lasciare un segno sono motori sani, non vanità.',-1]]}
+ ]},
+ {k:'soc', part:3, t:'Società', sub:'Filosofia sociale · come funziona una comunità', ax:[
+  {k:'agi', name:'Chi muove', l:'Le persone', r:'Le strutture',
+   lp:'spieghi i fatti sociali soprattutto con le scelte delle persone', rp:'spieghi i fatti sociali soprattutto con le strutture: classe, cultura, istituzioni', q:[
+   ['Chi si impegna davvero, in genere, ce la fa, qualunque sia il punto di partenza.',-1],
+   ['Le scelte delle persone sono in gran parte guidate dalla classe, dalla cultura e dalle istituzioni in cui sono cresciute.',1],
+   ['Per capire un problema sociale bisogna guardare al sistema, non alle colpe dei singoli.',1],
+   ['Parlare di «sistema» è spesso un modo per non assumersi responsabilità.',-1],
+   ['La povertà di una regione dipende più da come è inserita in un’economia più grande che dalla mentalità dei suoi abitanti.',1]]},
+  {k:'tra', name:'Tradizione', l:'Saggezza', r:'Da criticare',
+   lp:'riconosci alle tradizioni una saggezza che la ragione del singolo non vede', rp:'pensi che le tradizioni debbano passare l’esame della ragione', q:[
+   ['Le usanze che sopravvivono da secoli contengono una saggezza che un singolo ragionamento non vede.',-1],
+   ['Una tradizione va mantenuta solo se supera l’esame della ragione.',1],
+   ['Molte tradizioni servono soprattutto a mantenere i privilegi di qualcuno.',1],
+   ['Prima di abbattere un muro bisogna capire perché qualcuno l’ha costruito.',-1],
+   ['Il passato non ha nessuna autorità sul presente.',1]]},
+  {k:'cfl', name:'Società', l:'Armonia', r:'Conflitto',
+   lp:'vedi la società come un organismo in cui le parti possono armonizzarsi', rp:'vedi la società attraversata da conflitti tra chi ha potere e chi no', q:[
+   ['La società funziona come un organismo: ogni parte ha il suo ruolo per il bene del tutto.',-1],
+   ['La storia di ogni società è soprattutto storia di conflitti fra chi ha potere e chi no.',1],
+   ['Gli interessi di ricchi e poveri, in fondo, possono andare d’accordo.',-1],
+   ['Ogni ordine sociale nasconde qualcuno che domina e qualcuno che subisce.',1],
+   ['Un conflitto aperto fa crescere una società più di una pace finta.',1]]}
+ ]},
+ {k:'pot', part:3, t:'Potere', sub:'Filosofia politica · che cosa rende giusto un potere', ax:[
+  {k:'leg', name:'Legittimità', l:'Consenso', r:'Bene comune',
+   lp:'pensi che un potere sia giusto perché nasce dal consenso', rp:'pensi che un potere sia giusto se serve il bene comune e un ordine più alto delle leggi', q:[
+   ['Un governo è legittimo solo se nasce dal consenso dei governati.',-1],
+   ['Lo Stato esiste per servire il bene comune, anche quando la maggioranza non lo capisce.',1],
+   ['Le leggi sono giuste perché sono state votate e accettate, non perché corrispondono a un ordine superiore.',-1],
+   ['Una legge ingiusta non è vera legge, anche se l’hanno votata tutti.',1],
+   ['La società è un patto tra individui che si mettono d’accordo per convenienza.',-1]]},
+  {k:'ugu', name:'Valore primo', l:'Libertà', r:'Uguaglianza',
+   lp:'metti al primo posto la libertà di ciascuno', rp:'metti al primo posto l’uguaglianza, senza cui la libertà è vuota', q:[
+   ['Una società giusta è anzitutto una società in cui ognuno è libero di vivere come vuole.',-1],
+   ['Non c’è vera libertà dove ci sono grandi disuguaglianze di partenza.',1],
+   ['Tassare chi guadagna molto per dare a chi ha poco è, in fondo, una forma di costrizione.',-1],
+   ['Le disuguaglianze sono giuste solo se migliorano la condizione di chi sta peggio.',1],
+   ['Meglio una società più povera ma più uguale di una più ricca ma più divisa.',1]]},
+  {k:'pop', name:'Soggetti', l:'Cittadini del mondo', r:'Popoli',
+   lp:'ti senti prima di tutto cittadino del mondo', rp:'pensi che i popoli, con la loro lingua e la loro storia, siano soggetti reali', q:[
+   ['I popoli, con la loro lingua e la loro storia, sono soggetti reali, non semplici somme di individui.',1],
+   ['Mi sento prima di tutto cittadino del mondo.',-1],
+   ['Ogni popolo ha diritto a decidere da sé come governarsi.',1],
+   ['Le appartenenze nazionali sono destinate a perdere importanza, ed è un bene.',-1],
+   ['Un’umanità con un solo governo e una sola cultura sarebbe una perdita, non un progresso.',1]]},
+  {k:'dem', name:'Chi decide', l:'Tutti', r:'Chi sa',
+   lp:'pensi che le decisioni spettino a tutti, in modo eguale', rp:'pensi che le decisioni difficili spettino a chi ha le competenze', q:[
+   ['Su questioni complicate dovrebbero decidere gli esperti, non i cittadini.',1],
+   ['Il voto di chi non sa nulla di politica deve contare quanto quello di chi la studia da una vita.',-1],
+   ['Le persone comuni, messe insieme, decidono meglio di qualsiasi élite.',-1],
+   ['La democrazia funziona solo se il popolo è istruito; altrimenti è il governo degli incompetenti.',1],
+   ['Più decisioni dovrebbero essere prese con referendum e assemblee dirette.',-1]]}
+ ]},
+ {k:'sto', part:3, t:'Storia', sub:'Filosofia della storia · dove va il mondo', ax:[
+  {k:'pro', name:'Direzione', l:'Progresso', r:'Cicli e declino',
+   lp:'credi che la storia, nel complesso, vada verso il meglio', rp:'vedi la storia come un susseguirsi di ascese e declini', q:[
+   ['Nel complesso, l’umanità oggi vive meglio di quanto abbia mai vissuto.',-1],
+   ['La storia non va da nessuna parte: le civiltà nascono, crescono e decadono.',1],
+   ['Il futuro sarà migliore del presente.',-1],
+   ['In molte cose importanti stiamo peggio dei nostri nonni.',1],
+   ['Il progresso morale esiste: oggi siamo più giusti di qualche secolo fa.',-1]]},
+  {k:'mot', name:'Motore', l:'Idee', r:'Forze materiali',
+   lp:'pensi che siano le idee e le persone a muovere la storia', rp:'pensi che economia, risorse e geografia muovano la storia più delle idee', q:[
+   ['Sono le idee e le convinzioni a cambiare il corso della storia.',-1],
+   ['Economia, risorse e geografia spiegano la storia più delle idee e dei grandi personaggi.',1],
+   ['Una sola persona coraggiosa può cambiare il destino di un popolo.',-1],
+   ['Religioni e filosofie nascono dalle condizioni materiali della loro epoca.',1],
+   ['Senza certi libri il mondo di oggi sarebbe completamente diverso.',-1]]}
+ ]},
+ {k:'sac', part:3, t:'Sacro', sub:'Filosofia della religione · Dio, fede, mistero', ax:[
+  {k:'dio', name:'Dio', l:'Non esiste', r:'Esiste',
+   lp:'pensi che il mondo si spieghi senza Dio', rp:'pensi che Dio esista', q:[
+   ['Dio esiste.',1],
+   ['L’universo si spiega benissimo senza bisogno di un creatore.',-1],
+   ['L’esistenza del male e del dolore innocente rende difficile credere in un Dio buono.',-1],
+   ['Il fatto che esista qualcosa invece del nulla rimanda a una causa che va oltre il mondo.',1],
+   ['La morte non è l’ultima parola.',1]]},
+  {k:'fer', name:'Fede e ragione', l:'Separate', r:'Alleate',
+   lp:'pensi che fede e ragione stiano su piani separati o in conflitto', rp:'pensi che fede e ragione si aiutino a vicenda', q:[
+   ['Fede e ragione non si contraddicono: la vera fede cerca di capire.',1],
+   ['Credere significa accettare qualcosa che la ragione non può giustificare.',-1],
+   ['Più la scienza avanza, meno spazio resta per la religione.',-1],
+   ['Si può argomentare razionalmente a favore della fede, non solo crederci.',1],
+   ['Fede e ragione parlano di cose diverse e non dovrebbero mescolarsi.',-1,.6]]},
+  {k:'mis', name:'Sacro', l:'Disincanto', r:'Mistero',
+   lp:'vedi il mondo come fatto di cose spiegabili, senza un mistero ultimo', rp:'senti nel mondo una dimensione di sacro e di mistero', q:[
+   ['Ci sono luoghi, gesti o momenti sacri, anche per chi non è religioso.',1],
+   ['Il mondo è fatto di cose spiegabili, prima o poi: non c’è nessun mistero ultimo.',-1],
+   ['Davanti a un cielo stellato o a una nascita sento qualcosa che va oltre le spiegazioni.',1],
+   ['Riti e cerimonie sono residui del passato, belli ma vuoti.',-1],
+   ['Un mondo senza niente di sacro sarebbe un mondo più povero.',1]]}
+ ]}
+];
+/* ===================== SCUOLE DI PENSIERO =====================
+   Profili «sparsi»: ogni scuola ha una posizione solo sugli assi su cui ha una tesi riconoscibile.
+   [nome, profilo, descrizione] */
+const SCHOOLS = [
+ ['Tomismo',{mat:.8,lib:-.7,div:-.9,dua:.7,ego:-.6,rag:-.3,rea:-.9,dub:-.6,vie:.4,sci:-.5,int:-.5,csq:.6,vir:.8,ogg:-.9,rad:-.6,rel:.6,pla:-.8,sen:-.9,bel:-.8,leg:.8,dio:1,fer:1,mis:.8,viv:-.4},
+  'La ragione e la fede lavorano insieme. Il mondo ha un ordine, ogni cosa ha una natura e un fine, e la legge morale si legge nella natura stessa delle cose. È la sintesi di Tommaso d’Aquino tra Aristotele e il cristianesimo.'],
+ ['Agostinismo',{mat:.9,lib:-.4,dua:.9,ego:-.4,rag:-.5,vie:.8,bon:.9,rel:.5,sen:-.9,fel:.4,rad:-.9,dio:1,fer:.7,mis:.9,pro:.4,ogg:-.8},
+  'La verità si trova scendendo dentro di sé, dove si incontra Dio. L’essere umano è ferito e inquieto, e trova pace solo in ciò che lo supera. Una fede che cerca di capire, segnata dal senso del limite.'],
+ ['Platonismo',{mat:1,div:-1,rag:-1,dua:1,rea:-.8,bel:-1,art:-.8,ogg:-1,dem:.9,sen:-.8,mis:.6,fel:.4,vie:.3},
+  'Dietro le cose che cambiano ci sono forme eterne: il Bello, il Giusto, il Bene. La ragione può risalire fino a loro, e chi le conosce meglio dovrebbe guidare la città.'],
+ ['Aristotelismo',{div:-1,vir:1,rel:.9,pla:-.7,fel:-.5,rag:.2,rea:-.9,sen:-.6,bel:-.6,leg:.6,ogg:-.7,dem:.2,cer:-.6,dub:-.5,sci:-.4},
+  'Ogni essere ha una natura che tende a realizzarsi. Una vita buona è una vita in cui si coltivano le virtù dentro una comunità: l’uomo è un animale politico, e si diventa buoni facendo cose buone.'],
+ ['Stoicismo',{lib:.6,fel:.9,ogg:-.8,cer:.7,pop:-.8,div:-.3,sen:-.6,vir:.8,dub:-.4,mis:.4,rel:.2,bon:-.2,pla:-.6},
+  'Distingui ciò che dipende da te da ciò che non dipende da te, e accetta il resto con serenità. Tutti gli esseri umani sono cittadini di un unico cosmo ordinato da una ragione.'],
+ ['Epicureismo',{mat:-1,lib:-.4,fel:.5,dio:-.6,mis:-.5,csq:-.6,rag:.7,rel:.2,sen:.3,rad:.8,vie:-.5,dub:-.2},
+  'Il mondo è fatto di atomi e vuoto, la morte non è nulla per noi, gli dei non si occupano di noi. Si è felici con pochi desideri, molti amici e nessuna paura.'],
+ ['Empirismo',{rag:1,dub:.6,div:.5,ego:.7,rad:.6,ogg:.5,sci:-.2,vie:-.6,lib:.3,leg:-.7,dio:-.3,rea:-.2},
+  'Tutto ciò che sappiamo viene dall’esperienza, e la ragione da sola non dimostra quasi nulla. Diffida delle grandi costruzioni astratte: Locke, Hume e la tradizione britannica.'],
+ ['Razionalismo',{rag:-1,dua:.9,ego:-.8,dub:-.6,dio:.8,fer:.7,div:-.6,sci:-.6,rea:-.6,lib:-.3,vie:-.3},
+  'La ragione, se procede con ordine, raggiunge certezze che i sensi non possono dare. Cartesio, Leibniz e la fiducia in un mondo intelligibile fino in fondo.'],
+ ['Idealismo',{rea:.6,div:.7,pro:-.9,mot:-.9,rel:.7,mat:.7,cfl:.4,sen:-.5,leg:.5,pop:.5,ego:-.3},
+  'La realtà è spirito che si sviluppa nella storia: le contraddizioni si superano in sintesi più alte. Lo Stato, la cultura e la storia dei popoli sono il luogo in cui lo spirito prende forma.'],
+ ['Etica del dovere',{csq:1,ogg:-.8,rad:.7,rag:-.5,rea:.4,cer:.8,leg:-.6,lib:-.8,pro:-.5,pop:-.6,vir:-.5,dio:.3},
+  'Agisci solo secondo una regola che vorresti valesse per tutti, e tratta ogni persona sempre come un fine e mai solo come un mezzo. La morale nasce dalla ragione, non dalle conseguenze: è il cuore dell’etica di Kant.'],
+ ['Utilitarismo',{csq:-1,cer:1,viv:.7,ogg:-.3,rad:.9,vir:-.6,rag:.7,tra:.6,dio:-.6,pro:-.6,vie:-.5},
+  'Giusto è ciò che produce la maggiore felicità per il maggior numero di esseri capaci di soffrire, contati tutti allo stesso modo. Bentham, Mill e oggi Peter Singer.'],
+ ['Marxismo',{mat:-1,mot:1,cfl:1,agi:1,pro:-.7,ugu:1,dio:-1,mis:-.8,tra:.9,div:.8,ogg:.6,rad:1,rel:.7,pop:-.4,leg:-.2},
+  'La storia è storia di lotte di classe e le idee di un’epoca riflettono i suoi rapporti di produzione. Capire il mondo serve a trasformarlo, verso una società senza sfruttamento.'],
+ ['Esistenzialismo',{pla:1,sen:1,lib:-1,div:.7,dio:-.6,ogg:.6,rad:.8,fel:-.4,rel:-.5,tra:.6,mis:-.3,dub:.3},
+  'L’esistenza precede l’essenza: nessuno nasce con un destino scritto, siamo condannati a essere liberi e responsabili di ciò che diventiamo. Sartre, Camus, de Beauvoir.'],
+ ['Personalismo',{rel:1,pla:-.3,lib:-.9,dio:1,sen:-.7,dua:.7,ogg:-.7,ugu:.4,leg:.5,mot:-.6,mis:.8,fer:.6,tec:.4,ego:-.5,cer:-.3,pop:.3},
+  'Al centro c’è la persona, che non è un individuo isolato ma un essere in relazione, con una dignità che nessuna società o mercato può sacrificare. Mounier, Maritain e la tradizione cattolica del Novecento.'],
+ ['Fenomenologia',{vie:.7,dua:.6,sci:.4,rea:.2,dub:-.3,lin:.3,ego:-.2,tec:.5,mis:.3},
+  'Prima delle teorie viene l’esperienza vissuta: bisogna tornare «alle cose stesse» e descrivere come il mondo ci appare, senza ridurlo ai modelli della scienza. Husserl, Heidegger, Stein, Merleau-Ponty.'],
+ ['Pragmatismo',{sci:.9,rea:.5,dub:.5,div:.7,rag:.7,pro:-.5,dem:-.6,ogg:.3,csq:-.5,tra:.4,int:.4,vie:.1},
+  'Un’idea vale per le differenze che produce nella pratica. La verità non è una copia del mondo, ma ciò che regge alla prova dell’esperienza condivisa. James, Dewey, Peirce.'],
+ ['Naturalismo scientifico',{mat:-1,dua:-1,vie:-1,sci:-.9,rag:.8,lib:.6,dio:-1,mis:-.7,tec:-.7,rad:1,cos:.3,pro:-.6,fer:-.9,sen:.6,rea:-.8,ego:.5},
+  'Esiste solo ciò che la scienza può studiare: la mente è il cervello, l’universo non ha uno scopo, e la conoscenza affidabile è quella verificabile. Russell, Dennett e molta filosofia contemporanea.'],
+ ['Postmodernismo',{rea:1,int:1,lin:.9,div:1,dub:.8,ogg:.9,tra:1,bel:.9,art:.8,cfl:.7,agi:.7,sci:.7,pro:.4,ego:.7,pop:-.3},
+  'Non c’è un punto di vista neutro da cui guardare la verità: ogni discorso nasce da un contesto e da rapporti di potere. Diffida delle grandi narrazioni. Foucault, Derrida, Lyotard.'],
+ ['Teoria critica',{cfl:.9,agi:.9,tra:.9,tec:.9,ugu:.8,mot:.3,rea:.4,art:.6,int:.4,dem:-.4,dio:-.4,sci:.4},
+  'La ragione può diventare strumento di dominio: la società dei consumi, l’industria culturale e la tecnica vanno smascherate per liberare le persone. Adorno, Horkheimer, Marcuse, Habermas.'],
+ ['Ermeneutica',{int:.7,lin:.8,tra:-.4,rea:.4,vie:.7,sci:.4,div:.3,rel:.6,dub:.2},
+  'Comprendere è sempre interpretare, e si interpreta da dentro una tradizione e una lingua. Il dialogo con i testi e con gli altri fonde i nostri orizzonti. Gadamer, Ricoeur.'],
+ ['Pensiero nietzscheano',{ogg:1,rad:1,dio:-1,fel:-.8,pla:.9,sen:1,tra:1,rea:.8,int:.9,ugu:-.9,dem:.8,art:.7,pro:.8,cer:-.8,ego:.6,vir:.4},
+  'Dio è morto e i valori tradizionali vanno rovesciati: tocca a ciascuno creare i propri, dire sì alla vita anche nel dolore e superare la morale del gregge.'],
+ ['Romanticismo',{lin:.9,pop:.9,vie:.9,mis:.9,tec:.8,tra:-.4,art:.7,rel:.7,pro:.5,mot:-.7,int:.4,viv:.6,bel:.2},
+  'Sentimento, natura, lingua e anima dei popoli contano più della fredda ragione. Ogni popolo ha un suo genio che si esprime nella lingua, nei canti, nelle tradizioni. Herder, Novalis, Schelling.'],
+ ['Comunitarismo',{rel:1,cer:-.8,pop:.7,tra:-.6,vir:.8,leg:.6,pla:-.4,ugu:.2,ogg:-.3,agi:.3},
+  'L’io non esiste prima dei suoi legami: si diventa persone dentro comunità, tradizioni e storie condivise, che vengono prima dei diritti astratti. MacIntyre, Taylor, Sandel.'],
+ ['Liberalismo classico',{leg:-1,rel:-.8,ugu:-.8,pla:.5,pop:-.5,tra:.4,rad:.7,cer:.4,agi:-.6,cfl:-.4,dem:-.2},
+  'Ogni individuo ha diritti che vengono prima dello Stato, e lo Stato nasce da un patto per proteggerli. Libertà di pensiero, proprietà, governo limitato. Locke, Mill, Nozick.'],
+ ['Liberalismo egualitario',{leg:-.9,ugu:.7,cer:.7,rel:-.5,rad:.6,pop:-.4,agi:.4,csq:.5,tra:.3},
+  'Una società giusta è quella che sceglieremmo senza sapere che posto ci toccherà: libertà uguali per tutti e disuguaglianze ammesse solo se aiutano chi sta peggio. Rawls.'],
+ ['Pensiero buddhista',{ego:1,fel:1,div:1,cos:.9,viv:.9,cer:.9,dio:-.5,mis:.7,dub:.3,dua:.3,bon:-.2,rel:.6},
+  'Tutto è impermanente e interdipendente, e anche l’io è un flusso senza un nucleo fisso. La sofferenza nasce dall’attaccamento, e si scioglie con il distacco e la compassione verso ogni essere.'],
+ ['Taoismo',{fel:.9,div:.9,viv:.9,tec:.7,mis:.7,vie:.9,int:.5,bon:-.6,sen:-.5,dem:-.3,lin:-.3},
+  'Il Tao che si può nominare non è il vero Tao. Bisogna seguire il corso naturale delle cose, agire senza forzare, preferire la semplicità all’ambizione. Laozi, Zhuangzi.'],
+ ['Confucianesimo',{rel:1,tra:-1,vir:1,cer:-.8,leg:.8,dem:.6,bon:-.3,pro:.3,pop:.4,mis:.5,ogg:-.6,fel:-.2},
+  'Una società buona si regge su relazioni giuste: genitori e figli, governanti e governati, amici. Riti, educazione e virtù trasformano le persone più di qualsiasi legge.'],
+ ['Ecologia profonda',{viv:1,cos:.9,tec:.9,pro:.6,mis:.8,rel:.8,cer:.7,fel:.5,ugu:.4},
+  'L’essere umano non è padrone ma parte della natura, e ogni forma di vita ha valore in sé. La crisi ecologica è anzitutto una crisi del nostro modo di pensarci. Naess, Leopold.'],
+ ['Scetticismo',{dub:1,rea:.6,fel:.7,ogg:.6,sen:.3,tra:-.3,sci:.7,vie:-.2},
+  'Su quasi tutto si possono dare buone ragioni a favore e contro: meglio sospendere il giudizio e vivere secondo le usanze, con la serenità di chi non si aggrappa alle proprie opinioni. Pirrone, Sesto Empirico, Montaigne.'],
+ ['Strutturalismo e semiotica',{lin:1,int:.6,rea:.8,div:.5,agi:.8,ego:.7,mot:.3,sci:.4},
+  'Il senso nasce dai sistemi di segni e di differenze in cui siamo immersi: lingue, miti, culture funzionano come grammatiche. Saussure, Lévi-Strauss, Barthes, Eco, Lotman.'],
+ ['Conservatorismo filosofico',{tra:-1,bon:.7,rel:.8,pro:.4,leg:.6,ugu:-.5,rag:.3,pop:.6,mis:.6,dem:.3,tec:.4,vie:.6},
+  'Le istituzioni ereditate custodiscono un sapere accumulato da generazioni che nessuna ragione astratta può sostituire. Si riforma con prudenza, sapendo che l’uomo è imperfetto. Burke, Oakeshott, Scruton.']
+];
+
+/* ===================== FILOSOFI =====================
+   [nome, date, sardo?, profilo, descrizione] */
+const PHILS = [
+ ['Platone','428–348 a.C.',0,{mat:1,div:-1,rag:-1,dua:1,bel:-1,ogg:-1,dem:.9,sen:-.8,art:-.8,rea:-.8},'Allievo di Socrate. Il mondo delle idee e la città governata dai filosofi.'],
+ ['Aristotele','384–322 a.C.',0,{div:-1,vir:1,rel:.9,pla:-.7,rea:-.9,rag:.3,bel:-.6,ogg:-.7,leg:.6,fel:-.5,dio:.4},'Logica, natura, virtù, politica: il primo grande sistema del sapere.'],
+ ['Epicuro','341–270 a.C.',0,{mat:-1,fel:.5,dio:-.6,mis:-.5,rel:.2,rag:.7,csq:-.6,rad:.8},'Atomi, amicizia e libertà dalla paura della morte.'],
+ ['Epitteto','c. 50–135',0,{fel:1,vir:.8,ogg:-.8,cer:.7,lib:.4,pop:-.7,sen:-.6,mis:.4},'Schiavo diventato maestro stoico: cosa dipende da noi e cosa no.'],
+ ['Marco Aurelio','121–180',0,{fel:.9,cer:.8,pop:-.8,vir:.8,ogg:-.7,sen:-.5,lib:.5,ego:.3},'Imperatore stoico, i suoi «Pensieri» sono un diario di disciplina interiore.'],
+ ['Agostino d’Ippona','354–430',0,{mat:.9,dua:.9,bon:.9,dio:1,fer:.7,vie:.8,mis:.9,sen:-.9,rad:-.9,ego:-.4,pro:.4,fel:.4},'«Il nostro cuore è inquieto finché non riposa in te.» Padre della Chiesa.'],
+ ['Tommaso d’Aquino','1225–1274',0,{mat:.8,div:-.9,rea:-.9,ogg:-.9,rad:-.6,dio:1,fer:1,vir:.8,leg:.8,pla:-.8,sen:-.9,bel:-.8,lib:-.7,csq:.6},'La sintesi tra Aristotele e la fede cristiana; la legge naturale.'],
+ ['Guglielmo di Ockham','c. 1287–1347',0,{div:.8,rag:.6,fer:-.6,dio:1,rad:-.9,dub:.3,leg:-.4},'Il «rasoio»: non moltiplicare gli enti. Gli universali sono solo nomi.'],
+ ['Niccolò Machiavelli','1469–1527',0,{csq:-1,bon:.9,pro:.8,mot:-.3,rad:1,cfl:.7,pop:.6,tra:.2},'La politica ha leggi sue, separate dalla morale; la virtù del principe.'],
+ ['Michel de Montaigne','1533–1592',0,{dub:.9,ego:.7,ogg:.6,fel:.5,tra:-.3,cer:.3},'«Que sais-je?»: lo scetticismo gentile di chi studia sé stesso.'],
+ ['Cartesio','1596–1650',0,{rag:-1,dua:1,ego:-.9,dub:-.5,dio:.8,fer:.6,viv:-.8,cos:-.9,sci:-.6},'«Penso, dunque sono.» Mente e corpo come due sostanze.'],
+ ['Thomas Hobbes','1588–1679',0,{mat:-1,bon:1,leg:-.8,lib:.7,rag:.7,cfl:.5,dem:.4},'Lo stato di natura come guerra di tutti contro tutti, e il patto che crea lo Stato.'],
+ ['Blaise Pascal','1623–1662',0,{dio:1,fer:-.3,vie:1,bon:.8,mis:1,dub:.5,sen:-.8,tec:.2},'«Il cuore ha le sue ragioni che la ragione non conosce.»'],
+ ['Baruch Spinoza','1632–1677',0,{lib:1,rag:-1,mis:.5,dio:.2,fel:.8,ogg:.3,div:-.3,dua:-.4,vie:-.2,leg:-.5},'Dio o la Natura: un’unica sostanza, e la libertà come comprensione della necessità.'],
+ ['John Locke','1632–1704',0,{rag:1,leg:-1,rel:-.7,ugu:-.6,ego:-.2,dio:.6,fer:.6,dub:.3,pla:.3},'La mente come tabula rasa; diritti naturali e governo fondato sul consenso.'],
+ ['Gottfried Leibniz','1646–1716',0,{rag:-1,dio:1,fer:.9,pro:-.6,dua:.8,div:-.6,mis:.4,sen:-.7},'Il migliore dei mondi possibili, e una ragione per ogni cosa.'],
+ ['Giambattista Vico','1668–1744',0,{pro:.9,mot:-.5,vie:.6,lin:.8,int:.5,tra:-.5,pop:.6,dio:.8,rea:.4},'Corsi e ricorsi della storia; il vero è ciò che l’uomo stesso ha fatto.'],
+ ['David Hume','1711–1776',0,{rag:1,dub:.8,ego:1,ogg:.6,rad:1,dio:-.6,lib:.5,div:.6,tra:-.3,fer:-.8},'L’io come fascio di percezioni; la ragione schiava delle passioni.'],
+ ['Jean-Jacques Rousseau','1712–1778',0,{bon:-1,pop:.6,ugu:.8,tra:.4,leg:-.6,dem:-.8,vie:.5,tec:.6,pro:.5,rel:.4},'L’uomo nasce buono e la società lo corrompe; la volontà generale.'],
+ ['Immanuel Kant','1724–1804',0,{csq:1,rea:.5,rag:-.4,ogg:-.8,rad:.6,cer:.8,lib:-.9,pop:-.6,vir:-.5,dio:.3,fer:-.2,bel:-.2},'L’imperativo categorico; noi conosciamo il mondo attraverso le forme della nostra mente.'],
+ ['Edmund Burke','1729–1797',0,{tra:-1,bon:.6,rel:.8,leg:.6,pop:.5,ugu:-.5,dio:.7,pro:.3,mis:.6,vie:.5},'Le istituzioni come eredità delle generazioni; contro le rivoluzioni astratte.'],
+ ['Johann Gottfried Herder','1744–1803',0,{lin:1,pop:1,vie:.8,rel:.7,int:.5,tra:-.3,mot:-.4,dio:.6,cer:.2},'Ogni popolo ha un’anima che vive nella sua lingua e nei suoi canti.'],
+ ['G.W.F. Hegel','1770–1831',0,{rea:.6,div:.8,pro:-1,mot:-1,rel:.8,mat:.8,leg:.6,pop:.6,cfl:.4,sen:-.5,dio:.5,fer:.8},'La storia come cammino dello spirito verso la libertà, per tesi, antitesi e sintesi.'],
+ ['Arthur Schopenhauer','1788–1860',0,{fel:1,sen:.4,bon:.8,pro:.9,dio:-.8,ego:.7,viv:.8,cos:.6,rea:.6,mis:.3,art:-.2},'La vita come volontà cieca e dolore; la salvezza nell’arte e nella compassione.'],
+ ['John Stuart Mill','1806–1873',0,{csq:-.9,leg:-.9,rel:-.8,pla:.7,rag:1,tra:.8,cer:.7,pro:-.7,dio:-.3,ugu:-.3,dem:.3},'Utilitarismo e libertà individuale: si può fare tutto ciò che non nuoce agli altri.'],
+ ['Søren Kierkegaard','1813–1855',0,{dio:1,fer:-.9,sen:-.4,pla:.6,rel:-.6,ego:-.6,dub:.4,vie:.8,mis:.9,tra:.5},'Il singolo davanti a Dio; la fede come salto, l’angoscia come vertigine della libertà.'],
+ ['Karl Marx','1818–1883',0,{mat:-1,mot:1,cfl:1,agi:1,ugu:1,dio:-1,tra:.9,pro:-.8,rel:.7,rad:1,pop:-.6,mis:-.8},'Il materialismo storico e la critica del capitalismo.'],
+ ['Friedrich Nietzsche','1844–1900',0,{ogg:1,rad:1,dio:-1,pla:1,sen:1,tra:1,rea:.8,int:.9,ugu:-.9,fel:-.8,pro:.6,art:.8,cer:-.8,dem:.8},'La morte di Dio, l’oltreuomo, la volontà di potenza.'],
+ ['William James','1842–1910',0,{sci:.8,div:.7,lib:-.7,dio:.3,vie:.6,dub:.4,ego:.6,rag:.7,mis:.5},'Pragmatismo e varietà dell’esperienza religiosa; la volontà di credere.'],
+ ['Henri Bergson','1859–1941',0,{div:1,lib:-.8,dua:.8,vie:.9,sci:.6,mis:.6,dio:.6,pro:-.3,cos:.6},'Il tempo vissuto, l’intuizione, lo slancio vitale.'],
+ ['Edmund Husserl','1859–1938',0,{vie:.6,dua:.6,sci:.5,rag:-.5,dub:-.4,ego:-.5,rea:.2},'Il fondatore della fenomenologia: tornare alle cose stesse.'],
+ ['Benedetto Croce','1866–1952',0,{mat:.6,pro:-.7,mot:-.9,leg:-.4,dio:-.3,rad:.6,art:-.1,bel:-.3,int:.4,ugu:-.5},'Storicismo idealista e liberalismo: la storia come storia della libertà.'],
+ ['Giovanni Gentile','1875–1944',0,{mat:.9,rea:1,leg:.9,pop:.8,rel:.7,mot:-1,dem:.6,ugu:-.4,pro:-.6},'Attualismo: la realtà è l’atto del pensiero. Ideologo del fascismo.'],
+ ['Bertrand Russell','1872–1970',0,{mat:-.8,dio:-1,fer:-1,sci:-.7,vie:-.9,rag:.3,dub:.5,pop:-.7,tra:.8,rad:1,mis:-.6},'Logica, scienza, pacifismo; «Perché non sono cristiano».'],
+ ['Max Scheler','1874–1928',0,{ogg:-1,vie:.9,rel:.9,dio:.7,mis:.8,vir:.6,dua:.7},'L’etica dei valori: il cuore intuisce una gerarchia oggettiva di valori.'],
+ ['Ludwig Wittgenstein','1889–1951',0,{lin:.9,mis:.8,vie:.4,dub:.2,int:.4,rea:.5,sci:.5},'«Su ciò di cui non si può parlare si deve tacere.» I giochi linguistici.'],
+ ['Martin Heidegger','1889–1976',0,{tec:1,lin:.9,pro:.8,mis:.8,sci:.6,rea:.5,pla:.5,div:.6,vie:.8,tra:-.3,pop:.4},'L’essere, l’esserci, l’essere-per-la-morte; la tecnica come destino.'],
+ ['Edith Stein','1891–1942',0,{dio:1,fer:1,rel:.8,dua:.8,vie:.6,mis:.9,ego:-.5,ogg:-.8,cos:-.3},'Allieva di Husserl, convertita, carmelitana, uccisa ad Auschwitz. Santa.'],
+ ['Jacques Maritain','1882–1973',0,{dio:1,fer:1,rel:.9,ogg:-.9,leg:.6,ugu:.4,dem:-.5,div:-.8,pla:-.6,bel:-.6},'Umanesimo integrale e diritti umani pensati a partire dal tomismo.'],
+ ['Emmanuel Mounier','1905–1950',0,{rel:1,dio:1,ugu:.6,cfl:.3,mot:-.6,pla:-.2,tec:.5,leg:.4,pop:.2},'Fondatore del personalismo: la persona contro l’individualismo e i totalitarismi.'],
+ ['Karl Popper','1902–1994',0,{sci:.4,dub:.8,rea:-.6,rag:.3,leg:-.8,pro:-.4,tra:.4,dem:-.3,mot:-.6},'La scienza procede per tentativi ed errori; la società aperta e i suoi nemici.'],
+ ['Jean-Paul Sartre','1905–1980',0,{pla:1,sen:1,lib:-1,dio:-1,ogg:.7,rad:1,ugu:.8,cfl:.7,rel:-.4,tra:.8},'«L’esistenza precede l’essenza»; la libertà radicale e l’impegno.'],
+ ['Simone de Beauvoir','1908–1986',0,{pla:1,sen:.9,dio:-1,ugu:.9,agi:.8,tra:.9,rel:.2,cfl:.6},'«Donna non si nasce, lo si diventa.» Esistenzialismo e libertà femminile.'],
+ ['Simone Weil','1909–1943',0,{mis:1,dio:.9,fel:.8,ugu:.8,rel:.9,cer:.6,tec:.7,pop:.5,vie:.9,ogg:-.8},'Mistica e operaia: l’attenzione, la sventura, il bisogno di radici.'],
+ ['Hannah Arendt','1906–1975',0,{mot:-.8,dem:-.6,rel:.6,pla:.5,lib:-.8,tec:.6,leg:-.5,ogg:-.4,pop:-.2},'Le origini del totalitarismo, la banalità del male, la politica come agire insieme.'],
+ ['Albert Camus','1913–1960',0,{sen:.9,dio:-.8,fel:-.6,ogg:-.4,cfl:.3,rel:.4,mis:.2},'L’assurdo e la rivolta: bisogna immaginare Sisifo felice.'],
+ ['Emmanuel Levinas','1906–1995',0,{cer:.6,rel:1,ogg:-.8,dio:.7,ego:.2,csq:.7,mis:.7},'Il volto dell’altro come origine dell’etica, prima di ogni teoria.'],
+ ['Hans-Georg Gadamer','1900–2002',0,{int:.7,lin:.8,tra:-.6,vie:.8,sci:.4,rea:.4,rel:.5},'Verità e metodo: comprendere è dialogare con la tradizione.'],
+ ['Paul Ricoeur','1913–2005',0,{int:.6,lin:.7,dio:.8,fer:.6,ego:-.2,rel:.7,vir:.6,tra:-.2},'Il sé come racconto; l’ermeneutica dei simboli e della memoria.'],
+ ['Michel Foucault','1926–1984',0,{agi:1,cfl:.9,tra:1,ogg:.8,rea:.9,int:.8,pla:.8,ego:.8,sci:.7,dio:-.8},'Sapere e potere: prigioni, cliniche, sessualità come dispositivi di controllo.'],
+ ['Jacques Derrida','1930–2004',0,{int:1,lin:1,rea:1,div:1,tra:.8,dub:.7,ogg:.6},'La decostruzione: ogni testo rimanda ad altri testi, il senso è sempre differito.'],
+ ['Theodor Adorno','1903–1969',0,{tec:.9,cfl:.8,agi:.9,art:.8,tra:.8,pro:.6,ugu:.7,dio:-.5},'Critica dell’industria culturale; nessuna poesia è innocente dopo Auschwitz.'],
+ ['Jürgen Habermas','1929',0,{leg:-.8,dem:-.8,pro:-.5,ogg:-.3,pop:-.7,tra:.6,rad:.8,cer:.6,rel:.4},'La ragione comunicativa: è giusto ciò su cui tutti potrebbero accordarsi discutendo liberamente.'],
+ ['John Rawls','1921–2002',0,{leg:-.9,ugu:.8,cer:.6,rel:-.4,rad:.6,pop:-.2,agi:.5,csq:.6},'La giustizia come equità e il «velo d’ignoranza».'],
+ ['Robert Nozick','1938–2002',0,{ugu:-1,leg:-.9,rel:-.9,pla:.7,agi:-.7,rad:.6,csq:.7},'Lo Stato minimo e i diritti individuali come limiti invalicabili.'],
+ ['Alasdair MacIntyre','1929–2025',0,{vir:1,rel:1,tra:-.8,ogg:-.5,cer:-.6,dio:.8,div:-.6,pla:-.6,leg:.5},'Dopo la virtù: la crisi della morale moderna e il ritorno ad Aristotele.'],
+ ['Charles Taylor','1931',0,{rel:.9,lin:.9,pop:.6,dio:.7,vie:.7,mis:.6,tra:-.3,int:.5},'Le radici dell’io, l’età secolare, la politica del riconoscimento.'],
+ ['Peter Singer','1946',0,{csq:-1,cer:1,viv:1,cos:.8,rad:1,dio:-1,tra:.9,pla:.6},'Liberazione animale e altruismo efficace.'],
+ ['Daniel Dennett','1942–2024',0,{dua:-1,mat:-1,ego:.9,dio:-1,mis:-.8,lib:.3,sci:-.6,cos:.5,vie:-.9,fer:-1},'La coscienza spiegata, Darwin e la mente come prodotto dell’evoluzione.'],
+ ['Thomas Kuhn','1922–1996',0,{sci:.9,rea:.6,int:.4,dub:.4,pro:.2,agi:.5},'Le rivoluzioni scientifiche: la scienza cambia per salti di paradigma.'],
+ ['Arne Naess','1912–2009',0,{viv:1,cos:.8,tec:.8,rel:.8,mis:.6,fel:.5,ego:.4},'Fondatore dell’ecologia profonda.'],
+ ['Siddhartha Gautama','c. V sec. a.C.',0,{ego:1,fel:1,div:1,cer:.9,viv:.9,cos:.8,dio:-.3,mis:.5,dub:.2},'Il Buddha: le quattro nobili verità e la via di mezzo.'],
+ ['Laozi','c. VI sec. a.C.',0,{fel:.9,div:.9,vie:.9,tec:.6,viv:.8,bon:-.6,lin:-.4,mis:.7},'Il Tao Te Ching: l’acqua che vince la pietra cedendo.'],
+ ['Confucio','551–479 a.C.',0,{rel:1,tra:-1,vir:1,cer:-.8,leg:.8,dem:.6,pro:.4,ogg:-.6},'Riti, famiglia, virtù e buon governo.'],
+ ['Antonio Gramsci','1891–1937',1,{mat:-.7,cfl:.9,agi:.6,tra:.7,ugu:1,dio:-.9,rad:1,pro:-.6,rel:.7,lin:.8,int:.5,pop:.3,dem:-.6,div:.7,pla:.6,mot:.1},'Nato ad Ales: l’egemonia culturale, gli intellettuali, la questione meridionale. Nei Quaderni la lingua è sempre anche una visione del mondo.'],
+ ['Giovanni Battista Tuveri','1815–1887',1,{dio:1,fer:.7,dem:-.9,leg:-.5,pop:.6,ugu:.5,ogg:-.8,rad:-.6,lib:-.8,cfl:.3},'Filosofo di Forru, cattolico e democratico: sovranità del popolo, federalismo, diritto di resistere ai cattivi governi.'],
+ ['Antonio Pigliaru','1922–1969',1,{rel:.7,pop:.6,agi:.5,cfl:.4,dem:-.6,int:.3,lin:.4,leg:-.3,tra:.2},'Filosofo del diritto di Orune: mostrò che la vendetta barbaricina era un vero ordinamento giuridico, con un suo codice non scritto.'],
+ ['Giovanni Lilliu','1914–2012',1,{pop:.9,tra:-.5,rel:.7,lin:.7,pro:.4,mot:.2,agi:.4,int:.3},'Archeologo di Barumini, scopritore di Su Nuraxi: lesse la storia sarda come una «costante resistenziale».'],
+ ['Franciscu Sedda','',1,{lin:.9,int:.6,rea:.6,pop:.8,div:.5,rel:.6,agi:.4},'Semiologo, studia la nazione sarda e le identità come costruzioni culturali vive. Posizioni stimate dai suoi studi di semiotica.']
+];
+/* ===================== NODI DA SCIOGLIERE =====================
+   Combinazioni di risposte che tirano in direzioni diverse.
+   [condizione, titolo, testo] */
+const T = .35;
+const KNOTS = [
+ [s=>s.lib>T&&s.pla>T,'Libero di inventarti, ma non libero',
+  'Pensi che nessuno nasca con un destino scritto e che ognuno diventi ciò che sceglie, ma anche che le nostre scelte siano determinate da cause che non controlliamo. Se tutto è già determinato, chi è che sceglie? Spinoza risponderebbe che la libertà è capire la necessità; Sartre che non hai scampo: sei libero.'],
+ [s=>s.dua<-T&&s.lib<-T,'La mente è il cervello, ma le scelte sono libere',
+  'Se il pensiero è solo attività di neuroni, che seguono le leggi della fisica, dove si inserisce la libertà? È uno dei nodi più discussi della filosofia della mente. Una via d’uscita: libertà non significa sfuggire alle cause, ma agire secondo le proprie ragioni.'],
+ [s=>s.ogg<-T&&s.dio<-T&&s.mat<-T,'Una morale oggettiva in un mondo di sola materia',
+  'Pensi che bene e male siano oggettivi, ma anche che esista solo la materia e che Dio non ci sia. Allora di che cosa sono fatte le verità morali? È l’obiezione che il filosofo John Mackie muoveva al realismo morale. Altri rispondono che i valori nascono dalla natura umana, come la salute dal corpo.'],
+ [s=>s.ogg>T&&s.cer>T,'Un dovere universale senza una morale universale',
+  'Pensi che bene e male dipendano dalla cultura, ma anche che la sofferenza di uno sconosciuto conti quanto quella di tuo fratello. Questo dovere verso tutti, da dove viene, se non esiste una morale valida per tutti?'],
+ [s=>s.rea>T&&s.sci<-T,'La realtà è costruita, ma la scienza no',
+  'Pensi che conosciamo il mondo sempre attraverso filtri che lo costruiscono, ma che la scienza lo descriva com’è davvero. Forse la scienza è l’eccezione, ma allora bisogna spiegare che cosa la rende diversa dagli altri sguardi.'],
+ [s=>s.pop>T&&s.cer>T,'Radici e universalità',
+  'Pensi che i popoli siano soggetti reali, ma anche che dobbiamo a uno sconosciuto lontano quanto a chi ci è vicino. È la tensione tra Herder e Kant che attraversa tutta la filosofia politica. Una risposta possibile: ogni popolo vale quanto gli altri proprio perché ciascuno è insostituibile.'],
+ [s=>s.rel>T&&s.ugu<-T,'Fatti di legami, ma liberi prima di tutto',
+  'Pensi che nessuno diventi sé stesso da solo, ma metti al primo posto la libertà di ciascuno di vivere come vuole. Se siamo fatti dei nostri legami, una libertà che li ignora rischia di essere vuota; se la libertà viene prima, i legami diventano scelte revocabili.'],
+ [s=>s.sen>T&&s.dio>T,'Dio c’è, ma il senso lo costruisci tu',
+  'Molti credenti pensano che il senso della vita sia dato e vada scoperto. Tu credi in Dio ma pensi che il senso lo si costruisca. Non è per forza una contraddizione: Kierkegaard mette tutto il peso sulla scelta del singolo davanti a Dio.'],
+ [s=>s.rad<-T&&s.dio<-.2,'Il bene viene da Dio, ma Dio non c’è',
+  'Pensi che il bene abbia la sua radice in Dio, ma dubiti che Dio esista. È una posizione scomoda, la stessa che Dostoevskij mise in bocca a Ivan Karamazov: se Dio non c’è, tutto è permesso?'],
+ [s=>s.tra<-T&&s.pro<-T,'Fiducia nel passato e fiducia nel futuro',
+  'Dai valore alla saggezza delle tradizioni, ma pensi anche che la storia vada verso il meglio. Se il futuro sarà migliore, perché fidarsi del passato? La risposta di Burke: il progresso vero cresce dalle radici, non le taglia.'],
+ [s=>s.leg>T&&s.dem<-T,'Bene comune o volontà di tutti?',
+  'Pensi che un potere sia giusto se serve il bene comune, anche contro la maggioranza, ma vuoi anche che decidano tutti. Chi stabilisce che cos’è il bene comune, se non chi vota? Rousseau provò a sciogliere il nodo con la sua «volontà generale».'],
+ [s=>s.lin>T&&s.rea<-T,'Le lingue costruiscono, il mondo resta',
+  'Pensi che ogni lingua costruisca un modo di vedere il mondo, ma che il mondo si possa conoscere com’è. Forse la lingua cambia lo sguardo ma non la cosa guardata. È una posizione equilibrata, ma va difesa.'],
+ [s=>s.dub>T&&s.ogg<-T,'Dubiti di tutto, tranne che del bene',
+  'Tieni il dubbio come metodo su quasi tutto, ma sulle verità morali sei sicuro. Forse per te la morale si conosce in un altro modo, più vicino al cuore che alla dimostrazione, come pensava Pascal.'],
+ [s=>s.csq<-T&&s.vir>T&&s.cer<-T,'Conseguenze, carattere e lealtà',
+  'Giudichi le azioni dai risultati, guardi al carattere più che alle regole e metti prima i vicini. Sono tre pezzi di tre etiche diverse: utilitaristi, aristotelici e comunitaristi litigherebbero su come metterli insieme.']
+];
+/* Curiosità: combinazioni non contraddittorie ma rare */
+const QUIRKS = [
+ [s=>s.mat<-T&&s.mis>T,'Spiritualità senza aldilà','Pensi che esista solo la materia, ma senti nel mondo una dimensione di sacro. È la spiritualità laica di Spinoza, di Einstein, di molti scienziati: lo stupore senza un altro mondo.'],
+ [s=>s.dio>T&&s.fer<-T,'Una fede che non passa dalla ragione','Credi, ma non pensi che la ragione porti alla fede. È la via di Pascal e Kierkegaard più che quella di Tommaso d’Aquino.'],
+ [s=>s.dio<-T&&s.tra<-T,'Tradizione senza religione','Non credi, ma dai grande valore alle tradizioni. Le difendi per la loro saggezza umana, non per la loro origine divina: una posizione vicina a quella di Hume.'],
+ [s=>s.dio>T&&s.pla>T,'Credente e costruttore di sé','Credi in Dio ma pensi che la natura umana non sia data e che ognuno si costruisca. È raro: la tradizione religiosa tende a pensare l’uomo come creato con una natura.'],
+ [s=>s.viv>T&&s.dio>T,'La creazione ha valore in sé','Credi in Dio e pensi che animali e natura abbiano valore in sé, non solo per noi. È lo spirito del Cantico delle creature e della Laudato si’.'],
+ [s=>s.ego>T&&s.rel>T,'Un io fatto di relazioni','Vedi l’io come un flusso e insieme come intreccio di relazioni. È un’idea vicina al buddhismo, ma anche a molta filosofia africana: io sono perché noi siamo.']
+];
+
+/* ===================== PONTI CON LA BÚSSOLA POLITICA =====================
+   p = punteggi della Bússola Politica Sarda (sov, ide, str, eco, soc, ter, mon, aut) */
+const BRIDGES = [
+ [(s,p)=>s.pop>.3&&p.sov>.3,'La tua idea di sovranità poggia su una convinzione filosofica: i popoli sono soggetti reali, non somme di individui. È un indipendentismo coerente con la tua visione del mondo.'],
+ [(s,p)=>s.pop<-.2&&p.sov>.3,'Vuoi una Sardegna sovrana, ma filosoficamente ragioni da cittadino del mondo. Per te l’indipendenza è più una questione di autogoverno e di giustizia che di popolo: è la logica dell’indipendentismo civico.'],
+ [(s,p)=>s.pop>.3&&p.sov<-.2,'Pensi che i popoli siano soggetti reali, ma non ne tiri conseguenze di sovranità per la Sardegna. O vedi i sardi come parte di un popolo più grande, o tieni separate filosofia e politica.'],
+ [(s,p)=>s.tra<-.3&&p.soc>.3,'In filosofia dai valore alle tradizioni, in politica stai dalla parte del cambiamento. Una combinazione da riformista prudente: cambiare sì, ma partendo da ciò che c’è.'],
+ [(s,p)=>s.tra>.3&&p.soc<-.3,'Critichi le tradizioni in astratto, ma in politica le difendi. Forse non difendi la tradizione in sé, ma questa tradizione, la tua.'],
+ [(s,p)=>s.tra<-.3&&p.soc<-.3,'Tradizione in filosofia e in politica: sei conservatore nel senso pieno della parola, e coerente.'],
+ [(s,p)=>s.tra>.3&&p.soc>.3,'Critica delle tradizioni e progresso sociale: la tua politica discende direttamente dalla tua filosofia.'],
+ [(s,p)=>s.ugu>.3&&p.eco>.3,'Metti l’uguaglianza al primo posto, ma in economia ti fidi del mercato. Forse pensi che un mercato ben regolato sia lo strumento migliore per arrivarci.'],
+ [(s,p)=>s.ugu<-.3&&p.eco<-.3,'Metti la libertà al primo posto ma vuoi un’economia di comunità. Per te libertà non è solo assenza di vincoli, ma possibilità concrete di vivere bene.'],
+ [(s,p)=>s.rel>.4&&p.eco<-.2,'Persona fatta di relazioni ed economia di comunità: un’idea vicina al personalismo e alla dottrina sociale della Chiesa, anche se non lo sapevi.'],
+ [(s,p)=>s.cfl>.3&&p.str>.3,'Vedi la società attraversata da conflitti, e in politica scegli la rottura: la tua strategia discende dalla tua analisi.'],
+ [(s,p)=>s.cfl>.3&&p.str<-.3,'Vedi la società attraversata da conflitti, ma scegli la via delle istituzioni. Pensi che il conflitto vada portato dentro le regole, non fuori.'],
+ [(s,p)=>s.cfl<-.3&&p.str>.3,'Credi in una società armonica, ma vuoi una rottura. Forse perché l’armonia che cerchi oggi manca, e va ricostruita.'],
+ [(s,p)=>s.viv>.3&&p.ter>.3,'Difendi il territorio perché pensi che la natura abbia valore in sé: la tua ecologia politica ha radici filosofiche.'],
+ [(s,p)=>s.viv<-.3&&p.ter>.3,'Difendi il territorio, ma non per la natura in sé. Per te la terra conta come casa dei sardi, come bene comune di un popolo, non come valore assoluto.'],
+ [(s,p)=>s.viv>.3&&p.ter<-.3,'Pensi che la natura abbia valore in sé, ma in politica scegli lo sviluppo. Qui le tue convinzioni e le tue scelte tirano in direzioni diverse.'],
+ [(s,p)=>s.dio>.4&&p.soc>.3,'Credente e progressista: per te la fede spinge verso il cambiamento più che verso la conservazione.'],
+ [(s,p)=>s.dio<-.3&&p.soc<-.3,'Non credente ma tradizionalista: difendi le tradizioni per il loro valore umano, non religioso.'],
+ [(s,p)=>s.dem>.3&&p.aut<-.3,'Ti fidi degli esperti ma diffidi dello Stato: competenza sì, potere no.'],
+ [(s,p)=>s.dem<-.3&&p.aut>.3,'Vuoi che decidano tutti, ma vuoi anche uno Stato forte. È la tensione delle democrazie popolari: un potere forte che dice di parlare per tutti.']
+];
+const PAIRS = [
+ ['pop','sov','Popoli','Sovranità',1],
+ ['tra','soc','Tradizione','Società',-1],
+ ['ugu','eco','Libertà / uguaglianza','Economia',-1],
+ ['cfl','str','Armonia / conflitto','Strategia',1],
+ ['viv','ter','Chi conta','Territorio',1],
+ ['dem','aut','Chi decide','Stato',1]
+];
+const BPS_AX = {sov:['Unione','Indipendenza'],soc:['Tradizione','Progresso'],eco:['Comunità','Mercato'],str:['Istituzioni','Rottura'],ter:['Sviluppo','Tutela'],aut:['Libertà','Autorità']};
+/* ===================== INDICI ===================== */
+const AX = []; AREAS.forEach((a,ai)=>a.ax.forEach(x=>{x.area=ai; AX.push(x)}));
+const AXK = Object.fromEntries(AX.map(x=>[x.k,x]));
+const ALLQ = [];
+AREAS.forEach((a,ai)=>{ for(let r=0;r<5;r++) a.ax.forEach(x=>{ const q=x.q[r]; ALLQ.push({id:x.k+r, text:q[0], ax:x.k, dir:q[1], w:q[2]||1, extra:r>=3, area:ai, part:a.part}); }); });
+const LIST = {base:ALLQ.filter(q=>!q.extra), full:ALLQ};
+const OPTS = [
+ {v:2, t:'Totalmente d\'accordo'},
+ {v:1, t:'D\'accordo'},
+ {v:0, t:'Neutrale / non so'},
+ {v:-1,t:'In disaccordo'},
+ {v:-2,t:'Totalmente in disaccordo'}
+];
+
+/* ===================== CALCOLO ===================== */
+function scores(ans){
+  const s={},d={}; AX.forEach(a=>{s[a.k]=0;d[a.k]=0});
+  ALLQ.forEach(q=>{ const v=ans[q.id]; if(v==null) return; s[q.ax]+=v*q.dir*q.w; d[q.ax]+=2*q.w; });
+  const out={}; AX.forEach(a=>out[a.k]= d[a.k]? s[a.k]/d[a.k] : 0); return out;
+}
+/* Affinità calcolata solo sugli assi su cui il profilo ha una posizione.
+   Metà conta la distanza (quanto sei lontano), metà la direzione (se pendi dalla stessa parte):
+   così chi risponde in modo prudente non finisce sempre sulle scuole più moderate.
+   Un piccolo correttivo evita che i profili con pochi assi vincano per caso. */
+function match(sc,prof){
+  let t=0,n=0,d=0,nu=0,np=0;
+  for(const k in prof){ const u=sc[k],p=prof[k]; t+=(u-p)**2; n++; d+=u*p; nu+=u*u; np+=p*p; }
+  const dist=Math.sqrt((t+.45)/(n+1.5))/2, dir=1-d/(Math.sqrt(nu*np)+.3);
+  const rank=.5*dist+.5*dir*(n/(n+2))+.5*(2/(n+2));
+  return {rank,pct:Math.max(0,Math.min(99,Math.round(100*(1.12-rank*1.1))))};
+}
+function rank(list,sc,pi){ return list.map(x=>({x,...match(sc,x[pi])})).sort((a,b)=>a.rank-b.rank); }
+const PART_PRE = ['Sul mondo','Sul conoscere','Sul bene','Sulla città e sul sacro'];
+function portrait(sc){
+  return PARTS.map((p,pi)=>{
+    const axs=AX.filter(a=>AREAS[a.area].part===pi).sort((a,b)=>Math.abs(sc[b.k])-Math.abs(sc[a.k]));
+    const a=axs[0], v=sc[a.k];
+    if(Math.abs(v)<.2) return `${PART_PRE[pi]} non hai posizioni nette: tieni aperte le domande.`;
+    const b=axs[1], vb=sc[b.k];
+    const first = v<0?a.lp:a.rp;
+    let second = '';
+    if(Math.abs(vb)>=.35){
+      let s2 = vb<0?b.lp:b.rp;
+      if(first.startsWith('pensi che ')&&s2.startsWith('pensi che ')) s2=s2.slice(6);
+      second = (first.includes(',')?', e ':' e ')+s2;
+    }
+    return `${PART_PRE[pi]}, ${first}${second}.`;
+  });
+}
+function strong(sc){ return AX.map(a=>({a,v:sc[a.k]})).sort((x,y)=>Math.abs(y.v)-Math.abs(x.v)); }
+
+/* ===================== STATO ===================== */
+let ans = {}, idx = 0, view = 'intro', mode = 'base';
+try{ const s=JSON.parse(localStorage.getItem('bfs1')||'null'); if(s&&s.ans){ans=s.ans; idx=s.idx||0; mode=s.mode==='full'?'full':'base'; if(s.view==='result'||s.view==='q') view=s.view;} }catch(e){}
+const L = ()=>LIST[mode];
+if(idx>=L().length) idx=L().length-1;
+function save(){ try{localStorage.setItem('bfs1',JSON.stringify({ans,idx,view,mode}))}catch(e){} }
+function readBps(){ try{ const p=JSON.parse(localStorage.getItem('bps-scores')||'null'); return p&&p.sc?p:null; }catch(e){ return null; } }
+const app = document.getElementById('app');
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){ save(); window.scrollTo({top:0}); ({intro,q:question,stage,result})[view](); }
+
+function intro(){
+  const started = Object.keys(ans).length>0;
+  const nb=LIST.base.length, nf=LIST.full.length;
+  app.innerHTML = `<div class="stack-lg">
+   <div class="stack">
+    <span class="eyebrow">Sa bússola · edizione filosofica</span>
+    <h1>Bússola Filosofica</h1>
+    <p class="lede">Affermazioni semplici, senza nomi di scuole né parole difficili, per scoprire come pensi su ${AREAS.length} grandi territori della filosofia: dalla realtà alla mente, dal bene a Dio. Alla fine ottieni un ritratto del tuo pensiero, la scuola più vicina fra ${SCHOOLS.length}, i filosofi che ti somigliano fra ${PHILS.length} (anche sardi), e i nodi in cui le tue idee tirano in direzioni diverse.</p>
+   </div>
+   <div class="note"><strong>Non c'è un risultato giusto.</strong> Molte persone scoprono di avere posizioni che non sapevano di avere, o che appartengono a scuole lontane tra loro. Se hai già fatto la <a href="./">Bússola Politica Sarda</a> su questo dispositivo, alla fine vedrai anche come la tua filosofia si collega alla tua politica.</div>
+   <div class="facts"><span><b>${AREAS.length}</b> aree</span><span><b>${AX.length}</b> assi</span><span><b>${SCHOOLS.length}</b> scuole</span><span><b>${PHILS.length}</b> pensatori</span></div>
+   ${started?`<div class="row"><button class="btn" id="go">Riprendi da dove eri</button><button class="btn ghost" id="reset">Ricomincia da capo</button></div>`:
+   `<div class="modes">
+     <button class="mode" id="m-base"><span class="mt">Essenziale</span><span class="md">${nb} domande · circa 15 minuti</span></button>
+     <button class="mode" id="m-full"><span class="mt">Completa</span><span class="md">${nf} domande · circa 25 minuti · risultato più preciso</span></button>
+   </div>`}
+   <p class="small muted">Con l'essenziale puoi sempre approfondire dopo, senza ripetere le risposte già date.</p>
+  </div>`;
+  if(started){ go.onclick=()=>{view='q'; render()}; reset.onclick=()=>{ans={};idx=0;view='intro';render()}; }
+  else { document.getElementById('m-base').onclick=()=>{mode='base';idx=0;view='q';render()}; document.getElementById('m-full').onclick=()=>{mode='full';idx=0;view='q';render()}; }
+}
+
+function question(){
+  const list=L(), q=list[idx], a=AREAS[q.area];
+  const done = Math.round(100*idx/list.length);
+  app.innerHTML = `<div class="stack-lg">
+   <div class="stack">
+    <div class="qhead"><span class="eyebrow">${esc(a.t)}</span><span class="counter">${idx+1} / ${list.length}</span></div>
+    <div class="prog"><i style="width:${done}%"></i></div>
+    <div class="stages">${PARTS.map((p,i)=>`<span class="${q.part>=i?'on':''}">${esc(p.t)}</span>`).join('')}</div>
+   </div>
+   <p class="qtext">${esc(q.text)}</p>
+   <div class="opts" role="group" aria-label="Risposte">
+     ${OPTS.map((o,i)=>`<button class="opt ${ans[q.id]===o.v?'sel':''}" data-v="${o.v}"><span>${o.t}</span><span class="k">${i+1}</span></button>`).join('')}
+   </div>
+   <div class="row" style="justify-content:space-between">
+     <button class="link" id="back">${idx===0?'Torna all\'inizio':'Domanda precedente'}</button>
+     ${ans[q.id]!=null&&idx<list.length-1?'<button class="link" id="fwd">Avanti</button>':''}
+   </div>
+   <p class="small muted">${esc(a.sub)}</p>
+  </div>`;
+  app.querySelectorAll('.opt').forEach(el=>el.onclick=()=>pick(+el.dataset.v));
+  back.onclick=()=>{ if(idx===0){view='intro'} else idx--; render(); };
+  const f=document.getElementById('fwd'); if(f) f.onclick=()=>{idx++;render()};
+}
+function pick(v){
+  const list=L(); ans[list[idx].id]=v;
+  /* in modalità «approfondisci» salta le domande già risposte */
+  let n=idx+1; while(n<list.length && ans[list[n].id]!=null && mode==='full' && deepening) n++;
+  if(n>=list.length){ deepening=false; view='result'; return render(); }
+  const crossed = list[n].part!==list[idx].part;
+  idx=n; if(crossed) view='stage';
+  render();
+}
+let deepening=false;
+document.addEventListener('keydown',e=>{ if(view==='q'&&/^[1-5]$/.test(e.key)) pick(OPTS[+e.key-1].v); });
+
+function stage(){
+  const list=L(), p=list[idx].part, sc=scores(ans), top=rank(SCHOOLS,sc,1)[0];
+  app.innerHTML = `<div class="stack-lg">
+    <div class="stack"><span class="stage-num">${["I","II","III","IV"][p]}</span><h2>Ora: ${esc(PARTS[p].t)}</h2><p class="lede">${esc(PARTS[p].d)}</p></div>
+    <p class="muted">Finora l'ago punta verso <b style="color:var(--gold)">${esc(top.x[0])}</b>. Può ancora cambiare molto.</p>
+    <div><button class="btn" id="cont">Continua</button></div>
+  </div>`;
+  cont.onclick=()=>{view='q';render()};
+}
+
+function axisBar(a,v){
+  const r = Math.round((v+1)*50), l=100-r;
+  return `<div class="axis"><div class="name">${esc(a.name)}</div>
+   <div class="lab"><span>${esc(a.l)}</span><span>${esc(a.r)}</span></div>
+   <div class="bar" role="img" aria-label="${esc(a.name)}: ${esc(a.l)} ${l}%, ${esc(a.r)} ${r}%"><div class="l" style="width:${l}%"></div><div class="r"></div>
+   <div class="val"><b>${l}%</b><b>${r}%</b></div></div></div>`;
+}
+function mini(label,lpole,rpole,v){
+  const pos=Math.round((v+1)*50);
+  return `<div class="mini"><div class="lab"><span>${esc(lpole)}</span><b>${esc(label)}</b><span>${esc(rpole)}</span></div><div class="track"><i style="left:${pos}%"></i></div></div>`;
+}
+
+function result(){
+  const sc=scores(ans), schools=rank(SCHOOLS,sc,1), phils=rank(PHILS,sc,3);
+  const top=schools[0], far=phils[phils.length-1];
+  const sardi=phils.filter(o=>o.x[2]);
+  const pr=portrait(sc), st=strong(sc);
+  const sure=st.filter(o=>Math.abs(o.v)>=.4).slice(0,5), open=st.filter(o=>Math.abs(o.v)<.15).reverse().slice(0,5);
+  const knots=KNOTS.filter(k=>k[0](sc)), quirks=QUIRKS.filter(k=>k[0](sc));
+  const bps=readBps();
+  const bridges = bps? BRIDGES.filter(b=>b[0](sc,bps.sc)).slice(0,6) : [];
+  const answered = ALLQ.filter(q=>ans[q.id]!=null).length;
+  const missingFull = LIST.full.filter(q=>ans[q.id]==null).length;
+  try{ localStorage.setItem('bfs-scores',JSON.stringify({sc,school:top.x[0],schoolPct:top.pct,phil:phils[0].x[0],sardo:sardi[0].x[0],n:answered})); }catch(e){}
+
+  app.innerHTML = `<div class="stack-lg">
+   <div class="stack"><span class="eyebrow">Il tuo risultato · ${answered} risposte</span><h1>Bússola Filosofica</h1></div>
+
+   <section class="family stack">
+     <div><span class="tag">Il tuo ritratto</span></div>
+     ${pr.map(t=>`<p>${esc(t)}</p>`).join('')}
+   </section>
+
+   <section class="stack">
+     <span class="eyebrow">La scuola più vicina</span>
+     <div class="row" style="justify-content:space-between;align-items:baseline"><p class="match-big">${esc(top.x[0])}</p><span class="pct">${top.pct}%</span></div>
+     <p class="lede">${esc(top.x[2])}</p>
+     <div class="list">${schools.slice(1,7).map(o=>`<div class="item"><span class="nm">${esc(o.x[0])}</span><span class="pct">${o.pct}%</span><div class="meter"><i style="width:${o.pct}%"></i></div></div>`).join('')}</div>
+     <details class="small"><summary>Che cosa dicono le altre scuole</summary><div class="stack" style="margin-top:12px">${schools.slice(1,7).map(o=>`<p><b>${esc(o.x[0])}.</b> <span class="muted">${esc(o.x[2])}</span></p>`).join('')}</div></details>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Pensatori</span><h2>Ti somigliano</h2></div>
+     <div class="figs">
+       ${phils.slice(0,3).map(o=>`<div class="fig"><h3>${esc(o.x[0])}</h3><span class="pct">${o.x[1]?esc(o.x[1])+' · ':''}${o.pct}%</span><span class="small muted">${esc(o.x[4])}</span></div>`).join('')}
+       <div class="fig far"><span class="eyebrow" style="color:var(--red)">Il più lontano</span><h3>${esc(far.x[0])}</h3><span class="small muted">${esc(far.x[4])}</span></div>
+     </div>
+     <div class="sardi stack">
+       <span class="eyebrow">Fra i pensatori sardi</span>
+       ${sardi.map((o,i)=>`<div class="item"><span class="nm">${esc(o.x[0])}${o.x[1]?` <span class="muted small">${esc(o.x[1])}</span>`:''}</span><span class="pct">${o.pct}%</span><div class="meter"><i style="width:${o.pct}%"></i></div>${i===0?`<span class="sub">${esc(o.x[4])}</span>`:''}</div>`).join('')}
+     </div>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Dove sei netto, dove no</span><h2>Certezze e domande aperte</h2></div>
+     <div class="two">
+       <div class="stack"><h3>Le tue posizioni più nette</h3>${sure.length?sure.map(o=>`<p class="pos"><b>${esc(o.a.name)}</b> <span class="muted small">· ${esc(AREAS[o.a.area].t)}</span><br>${esc(cap(o.v<0?o.a.lp:o.a.rp))}.</p>`).join(''):'<p class="muted">Nessuna posizione davvero netta: sei un pensatore prudente.</p>'}</div>
+       <div class="stack"><h3>Dove resti in bilico</h3>${open.length?open.map(o=>`<p class="pos"><b>${esc(o.a.name)}</b> <span class="muted small">· ${esc(AREAS[o.a.area].t)}</span><br><span class="muted">tra «${esc(o.a.l)}» e «${esc(o.a.r)}»</span></p>`).join(''):'<p class="muted">Hai una posizione su quasi tutto.</p>'}</div>
+     </div>
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Nodi da sciogliere</span><h2>Dove le tue idee tirano in direzioni diverse</h2>
+     <p class="muted small">Non sono errori: sono punti su cui vale la pena pensare. Anche i grandi filosofi ne hanno.</p></div>
+     ${knots.length?knots.map(k=>`<div class="knot"><h3>${esc(k[1])}</h3><p>${esc(k[2])}</p></div>`).join(''):'<p>Le tue risposte sono notevolmente coerenti: non abbiamo trovato combinazioni in tensione tra quelle che controlliamo.</p>'}
+     ${quirks.length?`<div class="stack" style="margin-top:8px"><span class="eyebrow">Combinazioni rare</span>${quirks.map(k=>`<div class="knot quirk"><h3>${esc(k[1])}</h3><p>${esc(k[2])}</p></div>`).join('')}</div>`:''}
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Filosofia e politica</span><h2>Le radici delle tue idee politiche</h2></div>
+     ${bps?`<p class="muted small">Dalla Bússola Politica Sarda: <b>${esc(bps.fam||'')}</b>${bps.ideo?` · ${esc(bps.ideo)}`:''}.</p>
+       ${bridges.length?bridges.map(b=>`<div class="bridge"><p>${esc(b[1])}</p></div>`).join(''):'<p>Le tue posizioni filosofiche e politiche non mostrano legami forti in un senso o nell\'altro: forse tieni filosofia e politica su piani separati.</p>'}
+       <div class="pairs">${PAIRS.map(p=>{const a=AXK[p[0]], b=BPS_AX[p[1]]; return `<div class="pair">${mini(a.name,a.l,a.r,sc[p[0]])}${mini(p[3],b[0],b[1],bps.sc[p[1]]||0)}</div>`}).join('')}</div>
+       <p class="small muted">In ogni coppia, sopra il tuo asse filosofico e sotto quello politico.</p>`
+     :`<p>Non trovo il risultato della Bússola Politica Sarda su questo dispositivo. Se la fai, qui vedrai come la tua filosofia si collega alle tue scelte politiche: sovranità, tradizione, economia, territorio.</p>
+       <div><a class="btn" href="./" style="display:inline-block;text-decoration:none">Vai alla Bússola Politica Sarda</a></div>`}
+   </section>
+
+   <hr>
+   <section class="stack">
+     <div class="stack"><span class="eyebrow">Tutti i tuoi assi</span><h2>Il quadro a 360 gradi</h2></div>
+     ${AREAS.map((a,ai)=>`<details class="area"${ai===0?' open':''}><summary><span>${esc(a.t)}</span><span class="muted small">${esc(a.sub.split(' · ')[0])}</span></summary><div class="stack-lg" style="margin-top:16px">${a.ax.map(x=>axisBar(x,sc[x.k])).join('')}</div></details>`).join('')}
+   </section>
+
+   <hr>
+   <section class="stack">
+     ${missingFull?`<div class="note"><strong>Vuoi un risultato più preciso?</strong> Rispondi ad altre ${missingFull} domande: quelle già date restano.</div>`:''}
+     <div class="row">
+       ${missingFull?'<button class="btn" id="deep">Approfondisci</button>':''}
+       <button class="btn ${missingFull?'ghost':''}" id="copy">Copia il risultato</button>
+       <button class="btn ghost" id="review">Rivedi le risposte</button>
+       <button class="btn ghost" id="redo">Rifai il test</button>
+     </div>
+     <textarea id="copybox" hidden readonly></textarea>
+     <p class="small muted" id="copymsg" aria-live="polite"></p>
+   </section>
+
+   <details class="small muted">
+     <summary>Come funziona</summary>
+     <div class="stack" style="margin-top:12px">
+      <p>Le aree sono le grandi branche della filosofia; dentro ciascuna, gli assi sono tensioni classiche fra due posizioni. Ogni risposta sposta l'ago di un asse, da −100 a +100. Metà delle affermazioni sono formulate al contrario, per non premiare chi dice sempre sì.</p>
+      <p>Le scuole e i pensatori hanno una posizione stimata solo sugli assi su cui hanno una tesi riconoscibile: l'affinità si calcola su quelli. Sono semplificazioni, utili per orientarsi, non schede accademiche. Le posizioni dei pensatori sardi sono stime dai loro scritti e studi.</p>
+      <p>I «nodi» segnalano combinazioni che la filosofia considera in tensione. Spesso hanno buone soluzioni: servono a pensare, non a correggerti.</p>
+      <p>Le risposte restano solo in questo browser. Il collegamento con la Bússola Politica funziona se hai fatto entrambi i test sullo stesso dispositivo.</p>
+     </div>
+   </details>
+  </div>`;
+  const txt = `Bússola Filosofica\n\n${pr.join('\n')}\n\nScuola più vicina: ${top.x[0]} (${top.pct}%)\nAltre: ${schools.slice(1,4).map(o=>`${o.x[0]} ${o.pct}%`).join(', ')}\nPensatori: ${phils.slice(0,3).map(o=>o.x[0]).join(', ')}\nFra i sardi: ${sardi[0].x[0]}\n`+
+    (knots.length?`Nodi: ${knots.map(k=>k[1]).join('; ')}\n`:'')+`\n`+
+    AX.map(a=>`${a.name}: ${a.l} ${100-Math.round((sc[a.k]+1)*50)}% · ${a.r} ${Math.round((sc[a.k]+1)*50)}%`).join('\n');
+  copy.onclick=()=>{
+    const fb=()=>{copybox.hidden=false;copybox.value=txt;copybox.select();copymsg.textContent='Testo selezionato: copialo a mano.'};
+    try{ navigator.clipboard.writeText(txt).then(()=>copymsg.textContent='Risultato copiato.',fb); }catch(e){fb()}
+  };
+  const dp=document.getElementById('deep');
+  if(dp) dp.onclick=()=>{ mode='full'; deepening=true; idx=LIST.full.findIndex(q=>ans[q.id]==null); view='q'; render(); };
+  redo.onclick=()=>{ans={};idx=0;view='intro';render()};
+  review.onclick=()=>{idx=0;view='q';render()};
+}
+const cap = s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+render();
+</script>
+
+</body></html>

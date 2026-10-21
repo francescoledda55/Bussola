@@ -582,6 +582,8 @@ function result(){
   const top=ideos[0], intl=rankIntl(sc), it=intl[0];
   const far=figs[figs.length-1];
   const wp=rankW(WPARTIES,sc,3), wf=rankW(WFIGS,sc,2), wfar=wf[wf.length-1];
+  try{ localStorage.setItem('bps-scores',JSON.stringify({sc,fam:fam[0],ideo:top.x[0],intl:it.x[0]})); }catch(e){}
+  let bfs=null; try{ bfs=JSON.parse(localStorage.getItem('bfs-scores')||'null'); }catch(e){}
   app.innerHTML = `<div class="stack-lg">
    <div class="stack"><span class="eyebrow">Il tuo risultato</span><h1>Bússola Politica Sarda</h1></div>
 
@@ -648,6 +650,15 @@ function result(){
        ${wf.slice(0,3).map(o=>`<div class="fig"><h3>${esc(o.x[0])}</h3><span class="pct">${o.x[1]?esc(o.x[1])+' · ':''}${wpct(o.d)}%</span><span class="small muted">${esc(o.x[3])}</span></div>`).join('')}
        <div class="fig far"><span class="eyebrow" style="color:var(--red)">Il più lontano</span><h3>${esc(wfar.x[0])}</h3><span class="small muted">${esc(wfar.x[3])}</span></div>
      </div>
+   </section>
+
+   <hr>
+   <section class="family stack">
+     <span class="eyebrow">Le radici filosofiche</span>
+     ${bfs&&bfs.school?`<p>Nella <b>Bússola Filosofica</b> la tua scuola più vicina è <b style="color:var(--gold)">${esc(bfs.school)}</b>, e il pensatore che ti somiglia di più è <b>${esc(bfs.phil)}</b>.</p>
+       <div><a class="btn ghost" href="filosofia.html" style="display:inline-block;text-decoration:none">Vedi come filosofia e politica si collegano</a></div>`
+     :`<p>Da dove vengono queste idee? La <b>Bússola Filosofica</b> esplora il resto del tuo pensiero (realtà, conoscenza, bene, Dio) e alla fine lo collega a questo risultato.</p>
+       <div><a class="btn" href="filosofia.html" style="display:inline-block;text-decoration:none">Fai la Bússola Filosofica</a></div>`}
    </section>
 
    <hr>
